@@ -4,6 +4,7 @@ add_executable(${NAME})
 
 target_sources(${NAME} PRIVATE
     src/main.cpp
+    src/window.cpp
 )
 
 target_include_directories(${NAME}
@@ -20,5 +21,6 @@ target_link_libraries(${NAME}
 
 add_custom_target(${NAME}.run
     COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${NAME}.exe
+    DEPENDS ${NAME}
     USES_TERMINAL
 )
