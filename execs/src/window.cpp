@@ -128,6 +128,11 @@ void Window::Clear() const
     SDL_RenderClear(_renderer);
 }
 
+void Window::UpdateWindow() const
+{
+    SDL_RenderPresent(_renderer);
+}
+
 void Window::UpdateView() const
 {
     // SDL_UpdateWindowSurface(_window);

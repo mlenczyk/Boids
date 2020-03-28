@@ -13,6 +13,8 @@ public:
     bool IsClosed() const;
     void Clear() const;
     void UpdateView() const;
+    void UpdateWindow() const;
+
     SDL_Renderer* GetRenderer() const;
     // void Window::DrawBoid(Boid* boid) const;
 

@@ -45,6 +45,7 @@ private:
 
     Vector2D _position;
     Vector2D _velocity;
+    Vector2D _lastOrientation = {0, -1};
     SDL_Renderer* _renderer;
     std::string_view _texturePath;
     // double _acceleration;

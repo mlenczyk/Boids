@@ -1,4 +1,5 @@
 #include "boid.hpp"
+#include <cmath>
 #include <cstdio>
 #include "SDL_image.h"
 
@@ -126,8 +127,16 @@ void Boid::Free()
 
 void Boid::Update()
 {
-    // _position = _position + _velocity;
-    angle++;
+    auto lastOrientation = _lastOrientation;
+    auto desiredOrientation = _velocity;
+
+    auto dot =
+        lastOrientation.X() * desiredOrientation.X() + lastOrientation.Y() * desiredOrientation.Y();
+    auto det =
+        lastOrientation.X() * desiredOrientation.Y() - lastOrientation.Y() * desiredOrientation.X();
+    angle = std::atan2(det, dot) * 180 / M_PI;
+
+    _position = _position + _velocity;
 }
 
 Vector2D Boid::Position()
