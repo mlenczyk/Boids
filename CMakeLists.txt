@@ -8,6 +8,7 @@ project(${NAME} CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/bin)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 add_subdirectory(libs)
 add_subdirectory(execs)
@@ -17,3 +18,5 @@ if(NOT CMAKE_BUILD_TYPE)
 else()
     set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
 endif()
+
+file(COPY graphics DESTINATION ${CMAKE_BINARY_DIR})
