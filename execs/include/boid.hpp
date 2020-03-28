@@ -15,6 +15,7 @@ public:
     Vector2D& operator=(const Vector2D& other);
     Vector2D& operator+(const Vector2D& other);
     Vector2D& operator-(const Vector2D& other);
+    Vector2D& operator+=(const Vector2D& other);
 
 private:
     double _x;
@@ -26,9 +27,8 @@ class Boid
 public:
     Boid(SDL_Renderer* renderer, Vector2D position, Vector2D velocity, std::string_view texturePath);
     ~Boid();
-    // void Draw();
+
     void Update();
-    Vector2D Position();
     void Render();
 
     SDL_Texture* tex = nullptr;
@@ -38,14 +38,15 @@ public:
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     int width = 10;
     int height = 20;
+    Vector2D position;
+    Vector2D velocity;
 
 private:
     void Free();
     bool LoadTexture();
+    void ChangeOrientation();
 
-    Vector2D _position;
-    Vector2D _velocity;
-    Vector2D _lastOrientation = {0, -1};
+    Vector2D _absoluteZeroOrientation = {0, -1};
     SDL_Renderer* _renderer;
     std::string_view _texturePath;
     // double _acceleration;

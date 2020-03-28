@@ -42,12 +42,17 @@ Vector2D& Vector2D::operator-(const Vector2D& other)
     return *this;
 }
 
+Vector2D& Vector2D::operator+=(const Vector2D& other)
+{
+    return operator+(other);
+}
+
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 Boid::Boid(SDL_Renderer* renderer, Vector2D position, Vector2D velocity, std::string_view texturePath) :
     _renderer(renderer),
-    _position(position),
-    _velocity(velocity),
+    position(position),
+    velocity(velocity),
     _texturePath{texturePath}
 {
     LoadTexture();
@@ -61,7 +66,7 @@ Boid::~Boid()
 void Boid::Render()
 {
     // Set rendering space and render to screen
-    SDL_Rect renderQuad = {_position.X(), _position.Y(), width, height};
+    SDL_Rect renderQuad = {position.X(), position.Y(), width, height};
 
     // Set clip rendering dimensions
     if(clip != NULL)
@@ -125,21 +130,20 @@ void Boid::Free()
     }
 }
 
-void Boid::Update()
+void Boid::ChangeOrientation()
 {
-    auto lastOrientation = _lastOrientation;
-    auto desiredOrientation = _velocity;
+    auto desiredOrientation = velocity;
 
-    auto dot =
-        lastOrientation.X() * desiredOrientation.X() + lastOrientation.Y() * desiredOrientation.Y();
-    auto det =
-        lastOrientation.X() * desiredOrientation.Y() - lastOrientation.Y() * desiredOrientation.X();
+    auto dot = _absoluteZeroOrientation.X() * desiredOrientation.X() +
+        _absoluteZeroOrientation.Y() * desiredOrientation.Y();
+    auto det = _absoluteZeroOrientation.X() * desiredOrientation.Y() -
+        _absoluteZeroOrientation.Y() * desiredOrientation.X();
     angle = std::atan2(det, dot) * 180 / M_PI;
-
-    _position = _position + _velocity;
+    // printf("ANGLE: %lf", angle);
 }
 
-Vector2D Boid::Position()
+void Boid::Update()
 {
-    return _position;
+    ChangeOrientation();
+    position = position + velocity;
 }

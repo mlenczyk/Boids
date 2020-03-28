@@ -39,84 +39,38 @@ int main(int argc, char* argv[])
             Vector2D(400, 300),
             Vector2D(-0.05, 0),
             "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv);
-        Boid boidSkos(
+        Boid boidLeftUp(
             window.GetRenderer(),
             Vector2D(400, 300),
             Vector2D(-0.05, -0.05),
             "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv);
-        // std::array<Boid, 10> boids{
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv),
-        //     Boid(
-        //         window.GetRenderer(),
-        //         Vector2D(400, 300),
-        //         Vector2D(fRand(-VelocityRange, VelocityRange), fRand(-VelocityRange,
-        //         VelocityRange)), "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv)};
 
         while(!window.IsClosed())
         {
             boidUp.Update();
             boidUp.Render();
+            boidUp.velocity += Vector2D(0.0001, -0.000001);
 
             boidRight.Update();
             boidRight.Render();
+            boidRight.velocity += Vector2D(0.0001, -0.000001);
 
             boidDown.Update();
             boidDown.Render();
+            boidDown.velocity += Vector2D(0.0001, -0.000001);
 
             boidLeft.Update();
             boidLeft.Render();
+            boidLeft.velocity += Vector2D(0.0001, -0.000001);
 
-            boidSkos.Update();
-            boidSkos.Render();
+            boidLeftUp.Update();
+            boidLeftUp.Render();
+            boidLeftUp.velocity += Vector2D(0.0001, -0.000001);
 
             window.UpdateWindow();
             window.PollEvents();
             window.Clear();
-            // SDL_Delay(1);
+            SDL_Delay(1);
         }
     }
     catch(Exception& e)
