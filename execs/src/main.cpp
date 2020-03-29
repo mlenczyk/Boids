@@ -1,4 +1,3 @@
-#include <iostream>
 #include <vector>
 
 #include "boid.hpp"
@@ -22,25 +21,21 @@ int main(int argc, char* argv[])
     {
         Window window("Flocking simulation", 800, 600);
 
+        const auto boidSmallTexture = window.LoadTexture("./graphics/BoidSmall.png");
+
         std::vector<Boid> boids;
         for(auto i = 0; i < 1000; i++)
         {
             boids.push_back(Boid(
-                window.GetRenderer(),
                 Vector2D(fRand(50, 750), fRand(50, 550)),
                 Vector2D(fRand(VelocityMin, VelocityMax), fRand(VelocityMin, VelocityMax)),
-                "./graphics/BoidSmall.png"));
+                boidSmallTexture));
         }
-        Boid test(
-            window.GetRenderer(),
-            Vector2D(fRand(100, 700), fRand(100, 500)),
-            Vector2D(fRand(-VelocityMin, VelocityMin), fRand(-VelocityMin, VelocityMin)),
-            "E:/Programming/Git/repos/Boids/src/graphics/Boid.png");
-        // SDL_Delay(2000);
 
         while(!window.IsClosed())
         {
             window.PollEvents();
+
             for(auto& b: boids)
             {
                 auto forceOfAlignment = b.Alignment(boids);
@@ -48,7 +43,8 @@ int main(int argc, char* argv[])
                 b.ApplyForce(forceOfAlignment);
 
                 b.Update();
-                b.Render();
+
+                window.Render(b);
                 window.KeepBoidInScreen(b);
             }
 

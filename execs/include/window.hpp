@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include "boid.hpp"
+#include "texture.hpp"
 
 class Window
 {
@@ -11,27 +12,21 @@ public:
 
     void PollEvents();
     bool IsClosed() const;
-    void Clear() const;
     void UpdateView() const;
     void UpdateWindow() const;
     void KeepBoidInScreen(Boid& boid) const;
-
-    SDL_Renderer* GetRenderer() const;
-    // void Window::DrawBoid(Boid* boid) const;
+    Texture LoadTexture(std::string texturePath) const;
+    void Render(Boid& boid) const;
 
 private:
     bool Init();
+    void Clear() const;
 
     const std::string _title;
-    const int _width = 800;
-    const int _height = 600;
+    const int _width;
+    const int _height;
 
     bool _shouldBeClosed = false;
-
     SDL_Window* _window = nullptr;
-
-protected:
     SDL_Renderer* _renderer = nullptr;
 };
-
-extern Window window;
