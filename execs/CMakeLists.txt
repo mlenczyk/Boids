@@ -20,6 +20,7 @@ target_sources(${NAME} PRIVATE
     src/main.cpp
     src/window.cpp
     src/boid.cpp
+    src/vector2d.cpp
 )
 
 target_include_directories(${NAME}

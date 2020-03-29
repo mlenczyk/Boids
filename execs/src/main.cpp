@@ -1,5 +1,6 @@
 #include <array>
 #include <iostream>
+#include <vector>
 
 #include "boid.hpp"
 #include "exception.hpp"
@@ -15,62 +16,52 @@ double fRand(double fMin, double fMax)
 
 int main(int argc, char* argv[])
 {
-    static constexpr double VelocityRange = 0.0001;
+    static constexpr double VelocityMin = -1;
+    static constexpr double VelocityMax = 1;
     try
     {
-        Window window("Boids - flocking simulation", 800, 600);
-        Boid boidUp(
+        Window window("Flocking simulation", 800, 600);
+
+        std::vector<Boid> boids;
+        double rand1;
+        double rand2;
+        for(auto i = 0; i < 1000; i++)
+        {
+            boids.push_back(Boid(
+                window.GetRenderer(),
+                Vector2D(fRand(50, 750), fRand(50, 550)),
+                Vector2D(fRand(VelocityMin, VelocityMax), fRand(VelocityMin, VelocityMax)),
+                "E:/Programming/Git/repos/Boids/src/graphics/BoidSmall.png"sv));
+        }
+
+        Boid test(
             window.GetRenderer(),
-            Vector2D(400, 300),
-            Vector2D(0, -0.05),
-            "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv);
-        Boid boidRight(
-            window.GetRenderer(),
-            Vector2D(400, 300),
-            Vector2D(0.05, 0),
-            "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv);
-        Boid boidDown(
-            window.GetRenderer(),
-            Vector2D(400, 300),
-            Vector2D(0, 0.05),
-            "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv);
-        Boid boidLeft(
-            window.GetRenderer(),
-            Vector2D(400, 300),
-            Vector2D(-0.05, 0),
-            "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv);
-        Boid boidLeftUp(
-            window.GetRenderer(),
-            Vector2D(400, 300),
-            Vector2D(-0.05, -0.05),
+            Vector2D(fRand(100, 700), fRand(100, 500)),
+            Vector2D(fRand(-VelocityMin, VelocityMin), fRand(-VelocityMin, VelocityMin)),
             "E:/Programming/Git/repos/Boids/src/graphics/Boid.png"sv);
 
         while(!window.IsClosed())
         {
-            boidUp.Update();
-            boidUp.Render();
-            boidUp.velocity += Vector2D(0.0001, -0.000001);
+            window.PollEvents();
+            for(auto& b: boids)
+            {
+                // auto newVelocity = b.Align(boids);
+                auto forceOfAlignment = b.Alignment(boids);
+                forceOfAlignment = forceOfAlignment * 1;
+                b.ApplyForce(forceOfAlignment);
 
-            boidRight.Update();
-            boidRight.Render();
-            boidRight.velocity += Vector2D(0.0001, -0.000001);
-
-            boidDown.Update();
-            boidDown.Render();
-            boidDown.velocity += Vector2D(0.0001, -0.000001);
-
-            boidLeft.Update();
-            boidLeft.Render();
-            boidLeft.velocity += Vector2D(0.0001, -0.000001);
-
-            boidLeftUp.Update();
-            boidLeftUp.Render();
-            boidLeftUp.velocity += Vector2D(0.0001, -0.000001);
+                b.Update();
+                b.Render();
+                window.KeepBoidInScreen(b);
+                //     // b.velocity += Vector2D(0.0001, -0.000001);
+            }
+            test.Update();
+            test.Render();
+            window.KeepBoidInScreen(test);
 
             window.UpdateWindow();
-            window.PollEvents();
-            window.Clear();
-            SDL_Delay(1);
+            // SDL_Delay(1);
+            // printf("loop.\r\n");
         }
     }
     catch(Exception& e)

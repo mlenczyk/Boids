@@ -1,26 +1,9 @@
 #pragma once
 
-#include "window.hpp"
-
-class Vector2D
-{
-public:
-    Vector2D() = default;
-    Vector2D(double x, double y);
-
-    void Update(double x, double y);
-    double X() const;
-    double Y() const;
-
-    Vector2D& operator=(const Vector2D& other);
-    Vector2D& operator+(const Vector2D& other);
-    Vector2D& operator-(const Vector2D& other);
-    Vector2D& operator+=(const Vector2D& other);
-
-private:
-    double _x;
-    double _y;
-};
+#include <string_view>
+#include <vector>
+#include <SDL.h>
+#include "vector2d.hpp"
 
 class Boid
 {
@@ -30,24 +13,33 @@ public:
 
     void Update();
     void Render();
+    void SetPosition(Vector2D newPosition);
+    Vector2D Align(std::vector<Boid>& boids);
+    Vector2D Alignment(std::vector<Boid>& Boids);
+
+    void ApplyForce(Vector2D force);
 
     SDL_Texture* tex = nullptr;
     SDL_Rect* clip = NULL;
-    double angle = 0;
     SDL_Point* center = NULL;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
+    Vector2D position = {};
+    Vector2D velocity = {};
+    Vector2D acceleration = {};
+
     int width = 10;
     int height = 20;
-    Vector2D position;
-    Vector2D velocity;
+    double angle = 0;
 
 private:
     void Free();
     bool LoadTexture();
     void ChangeOrientation();
+    Vector2D Steer(Vector2D alignmentVelocity);
 
     Vector2D _absoluteZeroOrientation = {0, -1};
-    SDL_Renderer* _renderer;
-    std::string_view _texturePath;
-    // double _acceleration;
+    SDL_Renderer* _renderer = nullptr;
+    std::string_view _texturePath = {};
+    uint8_t _perception = 20;
+    double _maxSpeed = 3;
 };

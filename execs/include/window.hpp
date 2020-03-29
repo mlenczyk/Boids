@@ -2,6 +2,7 @@
 
 #include <string_view>
 #include <SDL.h>
+#include "boid.hpp"
 
 class Window
 {
@@ -14,6 +15,7 @@ public:
     void Clear() const;
     void UpdateView() const;
     void UpdateWindow() const;
+    void KeepBoidInScreen(Boid& boid) const;
 
     SDL_Renderer* GetRenderer() const;
     // void Window::DrawBoid(Boid* boid) const;
@@ -28,8 +30,6 @@ private:
     bool _shouldBeClosed = false;
 
     SDL_Window* _window = nullptr;
-    SDL_Surface* _screenSurface = nullptr;
-    SDL_Surface* _boidSurface = nullptr;
 
 protected:
     SDL_Renderer* _renderer = nullptr;

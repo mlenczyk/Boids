@@ -20,8 +20,6 @@ Window::~Window()
 {
     SDL_DestroyRenderer(_renderer);
     _renderer = nullptr;
-    SDL_FreeSurface(_boidSurface);
-    _boidSurface = nullptr;
     SDL_DestroyWindow(_window);
     _window = nullptr;
     SDL_Quit();
@@ -50,7 +48,6 @@ bool Window::Init()
         throw Exception("SDL failed to create renderer"sv);
     }
 
-    // Initialize PNG loading
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags))
     {
@@ -61,45 +58,10 @@ bool Window::Init()
     return true;
 }
 
-// bool Window::LoadMedia()
-// {
-//     // Loading success flag
-//     bool success = true;
-
-//     // Load PNG texture
-//     gTexture = loadTexture("07_texture_loading_and_rendering/texture.png");
-//     if(gTexture == NULL)
-//     {
-//         printf("Failed to load texture image!\n");
-//         success = false;
-//     }
-
-//     return success;
-// }
-
 bool Window::IsClosed() const
 {
     return _shouldBeClosed;
 }
-
-// void Window::DrawBoid(Boid* boid) const
-// {
-//     // // Set rendering space and render to screen
-//     // SDL_Rect renderQuad = {boid->GetPosition().X(), boid->GetPosition().Y(), 10, 20};
-
-//     // // Set clip rendering dimensions
-//     // if(boid->clip != NULL)
-//     // {
-//     //     renderQuad.w = boid->clip->w;
-//     //     renderQuad.h = boid->clip->h;
-//     // }
-
-//     // // Render to screen
-//     // SDL_RenderCopyEx(_renderer, boid->tex, boid->clip, &renderQuad, boid->angle, boid->center, boid->flip);
-
-//     SDL_Rect renderQuad = {boid->GetPosition().X(), boid->GetPosition().Y(), 10, 20};
-//     SDL_RenderCopy(_renderer, boid->_texture, NULL, &renderQuad);
-// }
 
 void Window::PollEvents()
 {
@@ -131,14 +93,31 @@ void Window::Clear() const
 void Window::UpdateWindow() const
 {
     SDL_RenderPresent(_renderer);
-}
-
-void Window::UpdateView() const
-{
-    // SDL_UpdateWindowSurface(_window);
+    Clear();
 }
 
 SDL_Renderer* Window::GetRenderer() const
 {
     return _renderer;
+}
+
+void Window::KeepBoidInScreen(Boid& boid) const
+{
+    if(boid.position.X() > _width)
+    {
+        boid.SetPosition(Vector2D(0, boid.position.Y()));
+    }
+    else if(boid.position.X() < 0)
+    {
+        boid.SetPosition(Vector2D(_width, boid.position.Y()));
+    }
+
+    if(boid.position.Y() > _height)
+    {
+        boid.SetPosition(Vector2D(boid.position.X(), 0));
+    }
+    else if(boid.position.Y() < 0)
+    {
+        boid.SetPosition(Vector2D(boid.position.X(), _height));
+    }
 }
