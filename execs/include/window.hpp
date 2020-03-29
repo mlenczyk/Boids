@@ -1,13 +1,12 @@
 #pragma once
 
-#include <string_view>
 #include <SDL.h>
 #include "boid.hpp"
 
 class Window
 {
 public:
-    Window(const std::string_view title, int width, int height);
+    Window(const std::string title, int width, int height);
     ~Window();
 
     void PollEvents();
@@ -23,7 +22,7 @@ public:
 private:
     bool Init();
 
-    const std::string_view _title;
+    const std::string _title;
     const int _width = 800;
     const int _height = 600;
 

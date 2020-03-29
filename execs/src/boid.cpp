@@ -1,10 +1,12 @@
 #include "boid.hpp"
+#include "string"
 #include <cmath>
 #include <cstdio>
 #include "SDL_image.h"
+#include "exception.hpp"
 #include "vector2d.hpp"
 
-Boid::Boid(SDL_Renderer* renderer, Vector2D pos, Vector2D vel, std::string_view texturePath) :
+Boid::Boid(SDL_Renderer* renderer, Vector2D pos, Vector2D vel, std::string texturePath) :
     _renderer{renderer},
     position{pos},
     velocity{vel},
@@ -24,7 +26,7 @@ void Boid::Render()
     SDL_Rect renderQuad = {position.X(), position.Y(), width, height};
 
     // Set clip rendering dimensions
-    if(clip != NULL)
+    if(clip != nullptr)
     {
         renderQuad.w = clip->w;
         renderQuad.h = clip->h;
@@ -42,10 +44,11 @@ bool Boid::LoadTexture()
     SDL_Texture* newTexture = nullptr;
 
     // Load image at specified path
-    SDL_Surface* loadedSurface = IMG_Load(_texturePath.data());
+    SDL_Surface* loadedSurface = IMG_Load(_texturePath.c_str());
     if(loadedSurface == nullptr)
     {
-        printf("Unable to load image %s! SDL_image Error: %s\n", _texturePath.data(), IMG_GetError());
+        throw Exception(
+            "Unable to load image " + _texturePath + "! SDL_image Error: " + IMG_GetError() + "\n");
     }
     else
     {
@@ -55,7 +58,9 @@ bool Boid::LoadTexture()
         newTexture = SDL_CreateTextureFromSurface(_renderer, loadedSurface);
         if(newTexture == nullptr)
         {
-            printf("Unable to create texture from %s! SDL Error: %s\n", _texturePath.data(), SDL_GetError());
+            throw Exception(
+                "Unable to create texture from " + _texturePath + "! SDL Error: " + SDL_GetError() +
+                "%s\n");
         }
         else
         {
@@ -76,10 +81,10 @@ bool Boid::LoadTexture()
 void Boid::Free()
 {
     // Free texture if it exists
-    if(tex != NULL)
+    if(tex != nullptr)
     {
         SDL_DestroyTexture(tex);
-        tex = NULL;
+        tex = nullptr;
         width = 0;
         height = 0;
     }
@@ -90,7 +95,6 @@ void Boid::ChangeOrientation()
     auto desiredOrientation = velocity;
 
     angle = Vector2D::MeasureAngleBetweenTwoVectors(_absoluteZeroOrientation, desiredOrientation);
-    // printf("ANGLE: %lf", angle);
 }
 
 Vector2D Boid::Steer(Vector2D alignmentVelocity)
@@ -101,108 +105,56 @@ Vector2D Boid::Steer(Vector2D alignmentVelocity)
 void Boid::Update()
 {
     ChangeOrientation();
-    acceleration = acceleration * 0.2;
+    acceleration = acceleration * 0.8;
     velocity += acceleration;
     position += velocity;
-    acceleration = Vector2D(); // reset acceleration
+    ApplyForce(Vector2D());
 }
-
-Vector2D Boid::Align(std::vector<Boid>& boids)
+Vector2D Boid::PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(std::vector<Boid>& boids)
 {
-    Vector2D alignmentVelocity = {};
-    uint8_t closeBoids = 0;
+    uint16_t perceivedBoidsCount = 0;
+    Vector2D alignmentVelocity(0, 0);
     double distance = 0;
-    auto globallyDesiredPosition = Vector2D(600, 600);
-    // for(auto& boid: boids)
-    // {
-    //     distance = DistanceBetweenPoint(position, boid.position);
-
-    //     if(distance < _perception)
-    //     {
-    //         alignmentVelocity += boid.velocity;
-    //         closeBoids++;
-    //     }
-    // }
-
-    // if(closeBoids > 0)
-    // {
-    //     printf("alignmentVelocity X: %lf\r\n", alignmentVelocity.X());
-    //     printf("alignmentVelocity Y: %lf\r\n", alignmentVelocity.Y());
-    //     alignmentVelocity = alignmentVelocity / boids.size();
-
-    //     if(alignmentVelocity > Vector2D(0.01, 0.01))
-    //     {
-    //         alignmentVelocity = Vector2D(0.01, 0.01);
-    //     }
-
-    //     return Steer(alignmentVelocity);
-    // }
-
-    // return velocity;
-    static constexpr int maxSpeed = 0.0001;
-
-    auto steeringVel = Steer(globallyDesiredPosition);
-    if(abs(steeringVel.X()) > abs(maxSpeed))
+    for(auto& boid: boids)
     {
-        if(steeringVel.X() < 0)
+        distance = Vector2D::MeasureDistanceBetweenTwoVectors(position, boid.position);
+        if((distance > 0) && (distance < _perception))
         {
-            steeringVel.Update(-maxSpeed, velocity.Y());
-        }
-        else
-        {
-            // printf("X too high: %lf\r\n", steeringVel.X());
-            steeringVel.Update(maxSpeed, velocity.Y());
-            // printf("X too high: %lf\r\n", steeringVel.X());
-        }
-    }
-    if(abs(steeringVel.Y()) > abs(maxSpeed))
-    {
-        if(steeringVel.Y() < 0)
-        {
-            steeringVel.Update(velocity.X(), -maxSpeed);
-        }
-        else
-        {
-            steeringVel.Update(velocity.X(), maxSpeed);
+            alignmentVelocity + boid.velocity;
+            perceivedBoidsCount++;
         }
     }
 
-    // distance = Vector2D::MeasureDistanceBetweenTwoVectors(position, globallyDesiredPosition);
-
-    // printf("steeringVel X: %lf\r\n", steeringVel.X());
-    // printf("steeringVel Y: %lf\r\n", steeringVel.Y());
-    return steeringVel;
-}
-Vector2D Boid::Alignment(std::vector<Boid>& Boids)
-{
-    Vector2D sum(0, 0);
-    int count = 0;
-    for(int i = 0; i < Boids.size(); i++)
+    if(perceivedBoidsCount > 0)
     {
-        float d = Vector2D::MeasureDistanceBetweenTwoVectors(position, Boids[i].position);
-        if((d > 0) && (d < _perception))
-        { // 0 < d < 50
-            sum + Boids[i].velocity;
-            count++;
-        }
-    }
-    // If there are boids close enough for alignment...
-    if(count > 0)
-    {
-        sum = sum / double(count); // Divide sum by the number of close boids (average of velocity)
-        sum.Normalize();           // Turn sum into a unit vector, and
-        sum = sum * _maxSpeed;     // Multiply by maxSpeed
-        // Steer = Desired - Velocity
-        Vector2D steer;
-        steer = sum - velocity; // sum = desired(average)
-        steer.Limit(1);
-        return steer;
+        alignmentVelocity = alignmentVelocity / double(perceivedBoidsCount);
+        return alignmentVelocity;
     }
     else
     {
-        Vector2D temp(0, 0);
-        return temp;
+        return Vector2D();
     }
+}
+
+Vector2D Boid::CalculateAlignmentVelocity(Vector2D averageVelocity)
+{
+    if(averageVelocity != Vector2D())
+    {
+        averageVelocity.Normalize();
+        averageVelocity = averageVelocity * _maxSpeed;
+
+        Vector2D alignmentVelocity;
+        alignmentVelocity = averageVelocity - velocity;
+        alignmentVelocity.Limit(_maxSpeed);
+        return alignmentVelocity;
+    }
+    return averageVelocity;
+}
+
+Vector2D Boid::Alignment(std::vector<Boid>& boids)
+{
+    auto averageVelocity = PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(boids);
+    return CalculateAlignmentVelocity(averageVelocity);
 }
 
 void Boid::SetPosition(Vector2D newPosition)

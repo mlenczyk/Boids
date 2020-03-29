@@ -30,6 +30,7 @@ public:
 
     bool operator<(const Vector2D& other);
     bool operator>(const Vector2D& other);
+    bool operator!=(const Vector2D& other);
 
     Vector2D AddTwoVectors(const Vector2D& a, const Vector2D& b);
     static double MeasureDistanceBetweenTwoVectors(const Vector2D& reference, const Vector2D& other);

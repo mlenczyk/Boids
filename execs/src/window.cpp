@@ -2,13 +2,9 @@
 #include "exception.hpp"
 
 #include <iostream>
-#include <string_view>
 #include "SDL_image.h"
 
-using std::string_view;
-using namespace std::literals::string_view_literals;
-
-Window ::Window(const string_view title, int width, int height) :
+Window ::Window(const std::string title, int width, int height) :
     _title(title),
     _width(width),
     _height(height)
@@ -30,29 +26,29 @@ bool Window::Init()
 {
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
     {
-        throw Exception("SDL not initialized"sv);
+        throw Exception("SDL not initialized");
     }
 
     _window = SDL_CreateWindow(
-        _title.data(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, 0);
+        _title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, 0);
 
     if(_window == nullptr)
     {
-        throw Exception("SDL failed to create window"sv);
+        throw Exception("SDL failed to create window");
     }
 
     _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
 
     if(_renderer == nullptr)
     {
-        throw Exception("SDL failed to create renderer"sv);
+        throw Exception("SDL failed to create renderer");
     }
 
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags))
     {
-        std::string_view errorView{IMG_GetError()};
-        throw Exception(errorView);
+        std::string error = IMG_GetError();
+        throw Exception(error);
     }
 
     return true;
