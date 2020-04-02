@@ -57,7 +57,7 @@ bool Window::IsClosed() const
 
 void Window::PollEvents()
 {
-    SDL_Event event;
+    static SDL_Event event;
 
     if(SDL_PollEvent(&event))
     {
@@ -66,6 +66,33 @@ void Window::PollEvents()
             case SDL_QUIT:
             {
                 _shouldBeClosed = true;
+                break;
+            }
+            case SDL_KEYDOWN:
+            { // Start/stop
+                if(event.key.keysym.sym == SDLK_s)
+                {
+                    if(_timer.isStarted())
+                    {
+                        _timer.stop();
+                    }
+                    else
+                    {
+                        _timer.start();
+                    }
+                }
+                // Pause/unpause
+                else if(event.key.keysym.sym == SDLK_p)
+                {
+                    if(_timer.isPaused())
+                    {
+                        _timer.unpause();
+                    }
+                    else
+                    {
+                        _timer.pause();
+                    }
+                }
                 break;
             }
             default:

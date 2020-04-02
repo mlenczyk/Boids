@@ -21,36 +21,34 @@ int main(int argc, char* argv[])
     {
         Window window("Flocking simulation", 800, 600);
 
-        const auto boidSmallTexture = window.LoadTexture("graphics/BoidSmall.png");
+        auto boidSmallTexture = window.LoadTexture("graphics/BoidSmall.png");
 
         std::vector<Boid> boids;
-        for(auto i = 0; i < 50; i++)
+        for(auto i = 0; i < 200; i++)
         {
             boids.push_back(Boid(
                 Vector2D(fRand(50, 750), fRand(50, 550)),
                 Vector2D(fRand(VelocityMin, VelocityMax), fRand(VelocityMin, VelocityMax)),
-                boidSmallTexture));
+                &boidSmallTexture));
         }
 
-        std::vector<Boid> boidsSnapshot;
+        std::vector<Boid> boidsSnapshot = boids;
 
         while(!window.IsClosed())
         {
-                        window.PollEvents();
+            window.PollEvents();
 
-            for(int i = 0; i < boids.size(); i++)
-                boidsSnapshot.push_back(boids[i]);
+            // for(int i = 0; i < boids.size(); i++)
+            //     boidsSnapshot.push_back(boids[i]);
 
             for(int i = 0; i < boids.size(); i++)
             {
                 auto forceOfAlignment = boids[i].Alignment(boids);
-                forceOfAlignment = forceOfAlignment * 1;
 
-                // auto forceOfSeparation = boids[i].Separation(boids);
-                // forceOfSeparation = forceOfSeparation * 1;
+                auto forceOfSeparation = boids[i].Separation(boids);
 
-                boidsSnapshot[i].ApplyForce(forceOfAlignment);
-                // boidsSnapshot[i].ApplyForce(forceOfSeparation);
+                // boidsSnapshot[i].ApplyForce(forceOfAlignment);
+                boidsSnapshot[i].ApplyForce(forceOfSeparation);
 
                 boidsSnapshot[i].Update();
             }
@@ -60,9 +58,14 @@ int main(int argc, char* argv[])
                 window.Render(boidsSnapshot[i]);
                 window.KeepBoidInScreen(boidsSnapshot[i]);
                 // SDL_Delay(1);
+                // if(boidsSnapshot[i].angle == 0)
+                // {
+                //     printf("bug");
+                // }
             }
 
             window.UpdateWindow();
+            boids = boidsSnapshot;
         }
     }
     catch(Exception& e)

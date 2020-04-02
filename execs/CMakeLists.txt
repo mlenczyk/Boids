@@ -14,6 +14,7 @@ target_sources(${NAME} PRIVATE
     src/boid.cpp
     src/vector2d.cpp
     src/texture.cpp
+    src/timer.cpp
 )
 
 target_include_directories(${NAME}
