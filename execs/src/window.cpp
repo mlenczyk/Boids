@@ -5,9 +5,7 @@
 #include "SDL_image.h"
 
 Window ::Window(const std::string title, int width, int height) :
-    _title(title),
-    _width(width),
-    _height(height)
+    _title(title), _width(width), _height(height)
 {
     _shouldBeClosed = !Init();
 }
@@ -36,7 +34,7 @@ bool Window::Init()
         throw Exception("SDL failed to create window");
     }
 
-    _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+    _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_PRESENTVSYNC);
     if(_renderer == nullptr)
     {
         throw Exception("SDL failed to create renderer");
@@ -92,22 +90,22 @@ void Window::UpdateWindow() const
 
 void Window::KeepBoidInScreen(Boid& boid) const
 {
-    if(boid.position.X() > _width)
+    if(boid.position.X() > _width - 20)
     {
-        boid.position = Vector2D(0, boid.position.Y());
+        boid.position = Vector2D(20, boid.position.Y());
     }
-    else if(boid.position.X() < 0)
+    else if(boid.position.X() < 20)
     {
-        boid.position = Vector2D(_width, boid.position.Y());
+        boid.position = Vector2D(_width - 20, boid.position.Y());
     }
 
-    if(boid.position.Y() > _height)
+    if(boid.position.Y() > _height - 20)
     {
-        boid.position = Vector2D(boid.position.X(), 0);
+        boid.position = Vector2D(boid.position.X(), 20);
     }
-    else if(boid.position.Y() < 0)
+    else if(boid.position.Y() < 20)
     {
-        boid.position = Vector2D(boid.position.X(), _height);
+        boid.position = Vector2D(boid.position.X(), _height - 20);
     }
 }
 
