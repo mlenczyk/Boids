@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
         auto boidSmallTexture = window.LoadTexture("graphics/BoidSmall.png");
 
         std::vector<Boid> boids;
-        for(auto i = 0; i < 200; i++)
+        for(auto i = 0; i < 400; i++)
         {
             boids.push_back(Boid(
                 Vector2D(fRand(50, 750), fRand(50, 550)),
@@ -38,17 +38,20 @@ int main(int argc, char* argv[])
         {
             window.PollEvents();
 
-            // for(int i = 0; i < boids.size(); i++)
-            //     boidsSnapshot.push_back(boids[i]);
-
             for(int i = 0; i < boids.size(); i++)
             {
                 auto forceOfAlignment = boids[i].Alignment(boids);
+                forceOfAlignment = forceOfAlignment * 0;
 
-                auto forceOfSeparation = boids[i].Separation(boids);
+                // auto forceOfSeparation = boids[i].Separation(boids);
+                // forceOfSeparation = forceOfSeparation * 0;
+
+                auto forceOfLeader = boids[i].ChooseLeader(boids);
+                forceOfLeader = forceOfLeader * 1;
 
                 // boidsSnapshot[i].ApplyForce(forceOfAlignment);
-                boidsSnapshot[i].ApplyForce(forceOfSeparation);
+                // boidsSnapshot[i].ApplyForce(forceOfSeparation);
+                boidsSnapshot[i].ApplyForce(forceOfLeader);
 
                 boidsSnapshot[i].Update();
             }

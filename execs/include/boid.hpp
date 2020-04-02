@@ -43,7 +43,7 @@ private:
 
     Vector2D _absoluteZeroOrientation = {0, -1};
     uint8_t _perception = 20;
-    double _maxSpeed = 1;
-    double _separationForce = 2;
+    double _maxSpeed = 2; // 2 def
+    // double _separationForce = 2;
     Texture* _texture = nullptr;
 };
