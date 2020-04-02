@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include "boid.hpp"
 #include "texture.hpp"
+#include "timer.hpp"
 
 class Window
 {
@@ -29,4 +30,6 @@ private:
     bool _shouldBeClosed = false;
     SDL_Window* _window = nullptr;
     SDL_Renderer* _renderer = nullptr;
+
+    LTimer _timer = LTimer();
 };

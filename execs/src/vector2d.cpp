@@ -1,5 +1,6 @@
 #include "vector2d.hpp"
 #include <cmath>
+#include "exception.hpp"
 
 Vector2D::Vector2D(double x, double y) : _x(x), _y(y)
 {
@@ -62,6 +63,10 @@ Vector2D& Vector2D::operator+=(const Vector2D& other)
 
 Vector2D& Vector2D::operator/(const Vector2D& other)
 {
+    if(other.X() == 0 || other.Y() == 0)
+    {
+        throw Exception("Zero division in vector");
+    }
     _x = _x / other.X();
     _y = _y / other.Y();
     return *this;
@@ -69,6 +74,10 @@ Vector2D& Vector2D::operator/(const Vector2D& other)
 
 Vector2D& Vector2D::operator/(double value)
 {
+    if(value == 0)
+    {
+        throw Exception("Zero division in vector");
+    }
     _x = _x / value;
     _y = _y / value;
     return *this;

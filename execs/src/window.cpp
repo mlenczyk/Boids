@@ -5,9 +5,7 @@
 #include "SDL_image.h"
 
 Window ::Window(const std::string title, int width, int height) :
-    _title(title),
-    _width(width),
-    _height(height)
+    _title(title), _width(width), _height(height)
 {
     _shouldBeClosed = !Init();
 }
@@ -36,7 +34,7 @@ bool Window::Init()
         throw Exception("SDL failed to create window");
     }
 
-    _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+    _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_PRESENTVSYNC);
     if(_renderer == nullptr)
     {
         throw Exception("SDL failed to create renderer");
@@ -59,7 +57,7 @@ bool Window::IsClosed() const
 
 void Window::PollEvents()
 {
-    SDL_Event event;
+    static SDL_Event event;
 
     if(SDL_PollEvent(&event))
     {
@@ -68,6 +66,33 @@ void Window::PollEvents()
             case SDL_QUIT:
             {
                 _shouldBeClosed = true;
+                break;
+            }
+            case SDL_KEYDOWN:
+            { // Start/stop
+                if(event.key.keysym.sym == SDLK_s)
+                {
+                    if(_timer.isStarted())
+                    {
+                        _timer.stop();
+                    }
+                    else
+                    {
+                        _timer.start();
+                    }
+                }
+                // Pause/unpause
+                else if(event.key.keysym.sym == SDLK_p)
+                {
+                    if(_timer.isPaused())
+                    {
+                        _timer.unpause();
+                    }
+                    else
+                    {
+                        _timer.pause();
+                    }
+                }
                 break;
             }
             default:
@@ -86,28 +111,32 @@ void Window::Clear() const
 
 void Window::UpdateWindow() const
 {
+    SDL_SetRenderDrawColor(_renderer, 0, 100, 250, 255);
+    SDL_RenderDrawLine(_renderer, _width / 2, 0, _width / 2, _height);
+    SDL_RenderDrawLine(_renderer, 0, _height / 2, _width, _height / 2);
+
     SDL_RenderPresent(_renderer);
     Clear();
 }
 
 void Window::KeepBoidInScreen(Boid& boid) const
 {
-    if(boid.position.X() > _width)
+    if(boid.position.X() > _width - 20)
     {
-        boid.position = Vector2D(0, boid.position.Y());
+        boid.position = Vector2D(20, boid.position.Y());
     }
-    else if(boid.position.X() < 0)
+    else if(boid.position.X() < 20)
     {
-        boid.position = Vector2D(_width, boid.position.Y());
+        boid.position = Vector2D(_width - 20, boid.position.Y());
     }
 
-    if(boid.position.Y() > _height)
+    if(boid.position.Y() > _height - 20)
     {
-        boid.position = Vector2D(boid.position.X(), 0);
+        boid.position = Vector2D(boid.position.X(), 20);
     }
-    else if(boid.position.Y() < 0)
+    else if(boid.position.Y() < 20)
     {
-        boid.position = Vector2D(boid.position.X(), _height);
+        boid.position = Vector2D(boid.position.X(), _height - 20);
     }
 }
 
@@ -123,7 +152,7 @@ Texture Window::LoadTexture(std::string texturePath) const
             "Unable to load texture " + texturePath + "! SDL_image Error: " + IMG_GetError() + "\n");
     }
 
-    SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
+    SDL_SetColorKey(loadedSurface, 0, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
     newTexture = SDL_CreateTextureFromSurface(_renderer, loadedSurface);
     if(newTexture == nullptr)
@@ -137,26 +166,26 @@ Texture Window::LoadTexture(std::string texturePath) const
     texture.width = loadedSurface->w;
     texture.height = loadedSurface->h;
 
-    SDL_FreeSurface(loadedSurface);
+    // SDL_FreeSurface(loadedSurface);
 
     return texture;
 }
 
 void Window::Render(Boid& boid) const
 {
-    SDL_Rect renderQuad = {static_cast<int>(boid.position.X()),
-                           static_cast<int>(boid.position.Y()),
+    SDL_Rect renderQuad = {static_cast<int>(boid.position.X()) - (boid.GetTexture()->width / 2),
+                           static_cast<int>(boid.position.Y()) - ((boid.GetTexture()->height * 5) / 6),
                            boid.GetTexture()->width,
                            boid.GetTexture()->height};
+    // is not drawn in the middle of texture.. bgug
+    // boid.clip = renderQuad;
 
-    if(boid.clip != nullptr)
-    {
-        renderQuad.w = boid.clip->w;
-        renderQuad.h = boid.clip->h;
-    }
-
+    boid.center.x = boid.GetTexture()->width / 2;
+    boid.center.y = (boid.GetTexture()->height * 5) / 6;
+    //&(boid.clip)
     auto result = SDL_RenderCopyEx(
-        _renderer, boid.GetTexture()->texture, boid.clip, &renderQuad, boid.angle, boid.center, boid.flip);
+        _renderer, boid.GetTexture()->texture, nullptr, &renderQuad, boid.angle, &(boid.center), boid.flip);
+    // fix this shit
     if(result == -1)
     {
         throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});

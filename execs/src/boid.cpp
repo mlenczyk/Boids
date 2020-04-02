@@ -2,11 +2,55 @@
 #include "exception.hpp"
 #include "vector2d.hpp"
 
-Boid::Boid(Vector2D pos, Vector2D vel, const Texture& texture) :
-    position{pos},
-    velocity{vel},
-    _texture{texture}
+Boid::Boid(Vector2D pos, Vector2D vel, Texture* texture) :
+    position{pos}, velocity{vel}, _texture{texture}
 {
+}
+
+Boid::~Boid()
+{
+    Free();
+}
+
+Boid::Boid(const Boid& other)
+{
+    clip = other.clip;
+    center = other.center;
+    flip = other.flip;
+    position = other.position;
+    velocity = other.velocity;
+    acceleration = other.acceleration;
+    angle = other.angle;
+    _texture = other._texture;
+}
+
+Boid& Boid::operator=(const Boid& other)
+{
+    if(this != &other)
+    {
+        Free();
+        clip = other.clip;
+        center = other.center;
+        flip = other.flip;
+        position = other.position;
+        velocity = other.velocity;
+        acceleration = other.acceleration;
+        angle = other.angle;
+        _texture = other._texture;
+    }
+    return *this;
+}
+
+void Boid::Free()
+{
+    clip = {};
+    center = {};
+    flip = SDL_FLIP_NONE;
+    position = Vector2D();
+    velocity = Vector2D();
+    acceleration = Vector2D();
+    angle = 0;
+    _texture = nullptr;
 }
 
 void Boid::ChangeOrientation()
@@ -18,11 +62,13 @@ void Boid::ChangeOrientation()
 
 void Boid::Update()
 {
-    ChangeOrientation();
-    acceleration = acceleration * 0.8;
+    acceleration = acceleration * 0.2;
     velocity += acceleration;
+    velocity.Limit(_maxSpeed);
     position += velocity;
-    ApplyForce(Vector2D());
+
+    ChangeOrientation();
+    acceleration = Vector2D();
 }
 
 Vector2D Boid::PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(std::vector<Boid>& boids)
@@ -33,9 +79,9 @@ Vector2D Boid::PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(std::vector
     for(auto& boid: boids)
     {
         distance = Vector2D::MeasureDistanceBetweenTwoVectors(position, boid.position);
-        if((distance > 0) && (distance < _perception))
+        if((&boid != this) && (distance < _alignmentPerception))
         {
-            alignmentVelocity + boid.velocity;
+            alignmentVelocity += boid.velocity;
             perceivedBoidsCount++;
         }
     }
@@ -72,13 +118,77 @@ Vector2D Boid::Alignment(std::vector<Boid>& boids)
     return CalculateAlignmentVelocity(averageVelocity);
 }
 
+Vector2D Boid::Separation(std::vector<Boid>& boids)
+{
+    auto separationPosition = Vector2D();
+    auto wypadkowa = Vector2D();
+    double distance = 0;
+    for(auto& boid: boids)
+    {
+        distance = Vector2D::MeasureDistanceBetweenTwoVectors(position, boid.position);
+        if((&boid != this) && (distance < _separationPerception))
+        {
+            separationPosition = (position - boid.position);
+            if(separationPosition.X() == 0 || separationPosition.Y() == 0)
+            {
+                // TODO
+                wypadkowa += Vector2D(10, 10);
+                // throw Exception("Zero division in separation");
+            }
+            else if(abs(separationPosition.X()) < 0.5 || abs(separationPosition.Y()) < 0.5)
+            {
+                continue;
+            }
+            else
+            {
+                wypadkowa += Vector2D(1 / separationPosition.X(), 1 / separationPosition.Y());
+            }
+        }
+    }
+
+    auto newPosition = Vector2D();
+    if(wypadkowa != Vector2D())
+    {
+        newPosition = position - wypadkowa;
+        newPosition.Limit(_maxSpeed);
+        return newPosition;
+    }
+    return wypadkowa;
+}
+
+Vector2D Boid::Cohesion(std::vector<Boid>& boids)
+{
+    uint16_t perceivedBoidsCount = 0;
+    auto averagePosition = Vector2D();
+    double distance = 0;
+    for(auto& boid: boids)
+    {
+        distance = Vector2D::MeasureDistanceBetweenTwoVectors(position, boid.position);
+        if((&boid != this) && (distance < _cohesionPerception))
+        {
+            averagePosition += boid.position;
+            perceivedBoidsCount++;
+        }
+    }
+    auto cohesionPosition = Vector2D();
+    if(perceivedBoidsCount > 0)
+    {
+        cohesionPosition = averagePosition / double(perceivedBoidsCount);
+
+        cohesionPosition = cohesionPosition - position;
+        cohesionPosition.Limit(_maxSpeed);
+        return cohesionPosition;
+    }
+    return cohesionPosition;
+}
+
 void Boid::ApplyForce(Vector2D force)
 {
     // F = m * a // but m doesn't matter so F = a
-    acceleration = force;
+    acceleration = acceleration + force;
 }
 
 const Texture* Boid::GetTexture()
 {
-    return &_texture;
+    return _texture;
 }
