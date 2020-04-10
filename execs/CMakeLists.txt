@@ -38,21 +38,22 @@ add_custom_target(${NAME}.run
 )
 
 IF (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(VERSION x86_64-w64-mingw32)
+    set(VERSION x64)
 ELSE (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(VERSION i686-w64-mingw32)
+    set(VERSION x86)
 ENDIF (CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-add_custom_command(TARGET ${NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SDL2_PATH}/${VERSION}/bin/SDL2.dll"
-        $<TARGET_FILE_DIR:${NAME}>/SDL2.dll
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SDL2_image_PATH}/${VERSION}/bin/SDL2_image.dll"
-        $<TARGET_FILE_DIR:${NAME}>/SDL2_image.dll
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SDL2_image_PATH}/${VERSION}/bin/libpng16-16.dll"
-        $<TARGET_FILE_DIR:${NAME}>/libpng16-16.dll)
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${SDL2_image_PATH}/${VERSION}/bin/libpng16-16.dll"
-        $<TARGET_FILE_DIR:${NAME}>/zlib1.dll)
+# add_custom_command(TARGET ${NAME} POST_BUILD
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         "${SDL2_PATH}/lib/${VERSION}/SDL2.dll"
+#         $<TARGET_FILE_DIR:${NAME}>/SDL2.dll
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         "${SDL2_image_PATH}/lib/${VERSION}/SDL2_image.dll"
+#         $<TARGET_FILE_DIR:${NAME}>/SDL2_image.dll
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         "${SDL2_image_PATH}/lib/${VERSION}/libpng16-16.dll"
+#         $<TARGET_FILE_DIR:${NAME}>/libpng16-16.dll
+#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#         "${SDL2_image_PATH}/lib/${VERSION}/zlib1.dll"
+#         $<TARGET_FILE_DIR:${NAME}>/zlib1.dll)
+        

@@ -7,51 +7,51 @@ Boid::Boid(Vector2D pos, Vector2D vel, Texture* texture) :
 {
 }
 
-Boid::~Boid()
-{
-    Free();
-}
+// Boid::~Boid()
+// {
+//     Free();
+// }
 
-Boid::Boid(const Boid& other)
-{
-    clip = other.clip;
-    center = other.center;
-    flip = other.flip;
-    position = other.position;
-    velocity = other.velocity;
-    acceleration = other.acceleration;
-    angle = other.angle;
-    _texture = other._texture;
-}
+// Boid::Boid(const Boid& other)
+// {
+//     clip = other.clip;
+//     center = other.center;
+//     flip = other.flip;
+//     position = other.position;
+//     velocity = other.velocity;
+//     acceleration = other.acceleration;
+//     angle = other.angle;
+//     _texture = other._texture;
+// }
 
-Boid& Boid::operator=(const Boid& other)
-{
-    if(this != &other)
-    {
-        Free();
-        clip = other.clip;
-        center = other.center;
-        flip = other.flip;
-        position = other.position;
-        velocity = other.velocity;
-        acceleration = other.acceleration;
-        angle = other.angle;
-        _texture = other._texture;
-    }
-    return *this;
-}
+// Boid& Boid::operator=(const Boid& other)
+// {
+//     if(this != &other)
+//     {
+//         Free();
+//         clip = other.clip;
+//         center = other.center;
+//         flip = other.flip;
+//         position = other.position;
+//         velocity = other.velocity;
+//         acceleration = other.acceleration;
+//         angle = other.angle;
+//         _texture = other._texture;
+//     }
+//     return *this;
+// }
 
-void Boid::Free()
-{
-    clip = {};
-    center = {};
-    flip = SDL_FLIP_NONE;
-    position = Vector2D();
-    velocity = Vector2D();
-    acceleration = Vector2D();
-    angle = 0;
-    _texture = nullptr;
-}
+// void Boid::Free()
+// {
+//     clip = {};
+//     center = {};
+//     flip = SDL_FLIP_NONE;
+//     position = Vector2D();
+//     velocity = Vector2D();
+//     acceleration = Vector2D();
+//     angle = 0;
+//     _texture = nullptr;
+// }
 
 void Boid::ChangeOrientation()
 {

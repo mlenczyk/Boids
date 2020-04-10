@@ -10,12 +10,12 @@ class Boid
 {
 public:
     Boid(Vector2D position, Vector2D velocity, Texture* boidSmallTexture);
-    ~Boid();
+    // ~Boid();
 
-    Boid(const Boid& other);
+    // Boid(const Boid& other);
 
-    Boid& operator=(const Boid& other);
-    void Free();
+    // Boid& operator=(const Boid& other);
+    // void Free();
 
     void Update();
     const Texture* GetTexture();

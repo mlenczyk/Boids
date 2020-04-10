@@ -19,6 +19,8 @@ public:
     Texture LoadTexture(std::string texturePath) const;
     void Render(Boid& boid) const;
 
+    SDL_Renderer* _renderer = nullptr;
+
 private:
     bool Init();
     void Clear() const;
@@ -29,7 +31,6 @@ private:
 
     bool _shouldBeClosed = false;
     SDL_Window* _window = nullptr;
-    SDL_Renderer* _renderer = nullptr;
 
     LTimer _timer = LTimer();
 };

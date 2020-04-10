@@ -1,4 +1,8 @@
-set(SDL2_URL https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz)
+# if (MSVC)
+#   set(SDL2_URL https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz)
+# else(MSVC)
+set(SDL2_URL https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip)
+# endif(MSVC)
 
 include(FetchContent)
 

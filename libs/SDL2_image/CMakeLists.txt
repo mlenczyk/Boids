@@ -1,4 +1,6 @@
-set(SDL2_IMAGE_URL https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz)
+# set(SDL2_IMAGE_URL https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-mingw.tar.gz)
+set(SDL2_IMAGE_URL https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip)
+
 
 include(FetchContent)
 

@@ -126,7 +126,7 @@ double Vector2D::MeasureAngleBetweenTwoVectors(const Vector2D& reference, const 
 {
     auto dot = reference.X() * other.X() + reference.Y() * other.Y();
     auto det = reference.X() * other.Y() - reference.Y() * other.X();
-    return std::atan2(det, dot) * 180 / M_PI;
+    return std::atan2(det, dot) * 180 / 3.14;
 }
 
 double Vector2D::Magnitude()
