@@ -48,7 +48,7 @@ private:
     // probably want to make this one variable some day
     uint16_t _perception = 60;
     uint16_t _alignmentPerception = _perception;
-    uint16_t _separationPerception = _perception - 45;
+    uint16_t _separationPerception = _perception - 40;
     uint16_t _cohesionPerception = _perception + 100;
 
     double _maxSpeed = 3;

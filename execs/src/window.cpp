@@ -152,8 +152,6 @@ Texture Window::LoadTexture(std::string texturePath) const
             "Unable to load texture " + texturePath + "! SDL_image Error: " + IMG_GetError() + "\n");
     }
 
-    //SDL_SetColorKey(loadedSurface, 0, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-
     newTexture = SDL_CreateTextureFromSurface(_renderer, loadedSurface);
     if(newTexture == nullptr)
     {
@@ -166,7 +164,7 @@ Texture Window::LoadTexture(std::string texturePath) const
     texture.width = loadedSurface->w;
     texture.height = loadedSurface->h;
 
-     //SDL_FreeSurface(loadedSurface);
+    // SDL_FreeSurface(loadedSurface);
 
     return texture;
 }
@@ -186,8 +184,8 @@ void Window::Render(Boid& boid) const
     auto result = SDL_RenderCopyEx(
         _renderer, boid.GetTexture()->texture, nullptr, &renderQuad, boid.angle, &(boid.center), boid.flip);
     // fix this shit
-    //if(result == -1)
+    // if(result == -1)
     //{
-      //  throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});
+    //  throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});
     //}
 }

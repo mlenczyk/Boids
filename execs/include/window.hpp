@@ -13,7 +13,6 @@ public:
 
     void PollEvents();
     bool IsClosed() const;
-    void UpdateView() const;
     void UpdateWindow() const;
     void KeepBoidInScreen(Boid& boid) const;
     Texture LoadTexture(std::string texturePath) const;

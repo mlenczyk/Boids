@@ -129,19 +129,18 @@ Vector2D Boid::Separation(std::vector<Boid>& boids)
         if((&boid != this) && (distance < _separationPerception))
         {
             separationPosition = (position - boid.position);
-            if(separationPosition.X() == 0 || separationPosition.Y() == 0)
-            {
-                // TODO
-                wypadkowa += Vector2D(10, 10);
-                // throw Exception("Zero division in separation");
-            }
-            else if(abs(separationPosition.X()) < 0.5 || abs(separationPosition.Y()) < 0.5)
+            if(abs(separationPosition.X()) < 0.1 || abs(separationPosition.Y()) < 0.5)
             {
                 continue;
             }
             else
             {
                 wypadkowa += Vector2D(1 / separationPosition.X(), 1 / separationPosition.Y());
+            }
+
+            if(separationPosition.X() == 0 || separationPosition.Y() == 0)
+            {
+                 throw Exception("Zero division in separation");
             }
         }
     }
