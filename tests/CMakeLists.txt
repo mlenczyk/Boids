@@ -12,8 +12,11 @@ target_sources(${NAME}
         src/boid.cpp
 )
 
-
-target_link_libraries(${NAME} gtest gtest_main)
+target_link_libraries(${NAME}
+        gtest
+        gtest_main
+        boids-testable
+)
 
 if (CMAKE_VERSION GREATER_EQUAL 3.10)
     gtest_discover_tests(${NAME})

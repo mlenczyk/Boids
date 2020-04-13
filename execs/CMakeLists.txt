@@ -1,15 +1,18 @@
 set(NAME boids)
 
-add_executable(${NAME})
+add_executable(${NAME})    
 
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
-
 find_package(SDL2_image REQUIRED)
-include_directories(${SDL2_IMAGE_INCLUDE_DIR})
 
-target_sources(${NAME} PRIVATE
-    src/main.cpp
+set(BOIDS_SOURCES
+    include/boids/boid.hpp
+    include/boids/window.hpp
+    include/boids/vector2d.hpp
+    include/boids/texture.hpp
+    include/boids/timer.hpp
+
+    # src/main.cpp
     src/window.cpp
     src/boid.cpp
     src/vector2d.cpp
@@ -17,17 +20,22 @@ target_sources(${NAME} PRIVATE
     src/timer.cpp
 )
 
+target_sources(${NAME} PUBLIC
+    src/main.cpp
+)
+
 target_include_directories(${NAME}
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/public
-    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include/
+        ${SDL2_INCLUDE_DIR}
+        ${SDL2_IMAGE_INCLUDE_DIR}
 )
 
 target_link_libraries(${NAME}
     PUBLIC
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
+    boids-testable
 )
 
 add_custom_target(${NAME}.run
@@ -57,3 +65,24 @@ add_custom_command(TARGET ${NAME} POST_BUILD
         "${SDL2_image_PATH}/lib/${VERSION}/zlib1.dll"
         $<TARGET_FILE_DIR:${NAME}>/zlib1.dll)
         
+if(enable${name}Tests)
+    set(TEST_LIB_NAME ${NAME}-testable)
+    add_library(${TEST_LIB_NAME} STATIC)
+    target_sources(${TEST_LIB_NAME} PRIVATE
+        ${BOIDS_SOURCES}
+    )
+    
+    target_include_directories(${TEST_LIB_NAME}
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/
+            ${SDL2_INCLUDE_DIR}
+            ${SDL2_IMAGE_INCLUDE_DIR}
+    )
+    
+    target_link_libraries(${TEST_LIB_NAME}
+        PUBLIC
+        ${SDL2_LIBRARY}
+        ${SDL2_IMAGE_LIBRARY}
+    )
+    message(WARNING "LIB ${TEST_LIB_NAME} GENERATED @@@@@@@@@@@@@@@@@@@")
+endif()

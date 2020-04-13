@@ -1,6 +1,6 @@
-#include "boid.hpp"
-#include "exception.hpp"
-#include "vector2d.hpp"
+#include "boids/boid.hpp"
+#include "boids/exception.hpp"
+#include "boids/vector2d.hpp"
 
 Boid::Boid(Vector2D pos, Vector2D vel, Texture* texture) :
     position{pos}, velocity{vel}, _texture{texture}
@@ -118,7 +118,7 @@ Vector2D Boid::Alignment(std::vector<Boid>& boids)
     return CalculateAlignmentVelocity(averageVelocity);
 }
 
-Vector2D Boid::Separation(std::vector<Boid>& boids)
+Vector2D Boid::Separation(const std::vector<Boid>& boids) const
 {
     auto separationPosition = Vector2D();
     auto wypadkowa = Vector2D();
@@ -140,7 +140,7 @@ Vector2D Boid::Separation(std::vector<Boid>& boids)
 
             if(separationPosition.X() == 0 || separationPosition.Y() == 0)
             {
-                 throw Exception("Zero division in separation");
+                throw Exception("Zero division in separation");
             }
         }
     }

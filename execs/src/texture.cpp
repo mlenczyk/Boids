@@ -1,7 +1,8 @@
 #include <algorithm>
-#include <SDl.h>
+// #include <SDl.h>
+#include <SDL.h>
 
-#include "texture.hpp"
+#include "boids/texture.hpp"
 
 Texture::~Texture()
 {

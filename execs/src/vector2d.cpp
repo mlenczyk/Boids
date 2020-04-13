@@ -1,6 +1,7 @@
-#include "vector2d.hpp"
 #include <cmath>
-#include "exception.hpp"
+
+#include "boids/exception.hpp"
+#include "boids/vector2d.hpp"
 
 Vector2D::Vector2D(double x, double y) : _x(x), _y(y)
 {
@@ -29,93 +30,95 @@ Vector2D& Vector2D::operator=(const Vector2D& other)
     return *this;
 }
 
-Vector2D& Vector2D::operator+(const Vector2D& other)
+Vector2D Vector2D::operator+(const Vector2D& other) const
+{
+    auto x = _x + other.X();
+    auto y = _y + other.Y();
+    return Vector2D(x, y);
+}
+
+Vector2D Vector2D::operator+(double value) const
+{
+    auto x = _x + value;
+    auto y = _y + value;
+    return Vector2D(x, y);
+}
+
+Vector2D Vector2D::operator-(const Vector2D& other) const
+{
+    auto x = _x - other.X();
+    auto y = _y - other.Y();
+    return Vector2D(x, y);
+}
+Vector2D Vector2D::operator-(double value) const
+{
+    auto x = _x - value;
+    auto y = _y - value;
+    return Vector2D(x, y);
+}
+
+Vector2D& Vector2D::operator+=(const Vector2D& other)
 {
     _x = _x + other.X();
     _y = _y + other.Y();
     return *this;
 }
 
-Vector2D& Vector2D::operator+(double value)
-{
-    _x = _x + value;
-    _y = _y + value;
-    return *this;
-}
-
-Vector2D& Vector2D::operator-(const Vector2D& other)
-{
-    _x = _x - other.X();
-    _y = _y - other.Y();
-    return *this;
-}
-Vector2D& Vector2D::operator-(double value)
-{
-    _x = _x - value;
-    _y = _y - value;
-    return *this;
-}
-
-Vector2D& Vector2D::operator+=(const Vector2D& other)
-{
-    return operator+(other);
-}
-
-Vector2D& Vector2D::operator/(const Vector2D& other)
+Vector2D Vector2D::operator/(const Vector2D& other) const
 {
     if(other.X() == 0 || other.Y() == 0)
     {
         throw Exception("Zero division in vector");
     }
-    _x = _x / other.X();
-    _y = _y / other.Y();
-    return *this;
+    auto x = _x / other.X();
+    auto y = _y / other.Y();
+    return Vector2D(x, y);
 }
 
-Vector2D& Vector2D::operator/(double value)
+Vector2D Vector2D::operator/(double value) const
 {
     if(value == 0)
     {
         throw Exception("Zero division in vector");
     }
-    _x = _x / value;
-    _y = _y / value;
-    return *this;
+    auto x = _x / value;
+    auto y = _y / value;
+    return Vector2D(x, y);
 }
 
-Vector2D& Vector2D::operator*(const Vector2D& other)
+Vector2D Vector2D::operator*(const Vector2D& other) const
 {
-    _x = _x * other.X();
-    _y = _y * other.Y();
-    return *this;
+    auto x = _x * other.X();
+    auto y = _y * other.Y();
+    return Vector2D(x, y);
 }
 
-Vector2D& Vector2D::operator*(double value)
+Vector2D Vector2D::operator*(double value) const
 {
-    _x = _x * value;
-    _y = _y * value;
-    return *this;
+    auto x = _x * value;
+    auto y = _y * value;
+    return Vector2D(x, y);
 }
 
-bool Vector2D::operator<(const Vector2D& other)
+bool Vector2D::operator<(const Vector2D& other) const
 {
     return _x < other.X() && _y < other.Y();
 }
 
-bool Vector2D::operator>(const Vector2D& other)
+bool Vector2D::operator>(const Vector2D& other) const
 {
     return _x > other.X() && _y > other.Y();
 }
 
-bool Vector2D::operator!=(const Vector2D& other)
+bool Vector2D::operator!=(const Vector2D& other) const
 {
     return _x != other.X() && _y != other.Y();
 }
 
-Vector2D Vector2D::AddTwoVectors(const Vector2D& a, const Vector2D& b)
-{
-    return Vector2D(a.X() + b.X(), a.Y() + b.Y());
-}
+// Vector2D operator+(const Vector2D& a, const Vector2D& b)const
+// {
+//     return Vector2D(a.X() + b.X(), a.Y() + b.Y());
+// }
 
 double Vector2D::MeasureDistanceBetweenTwoVectors(const Vector2D& reference, const Vector2D& other)
 {
@@ -129,7 +132,7 @@ double Vector2D::MeasureAngleBetweenTwoVectors(const Vector2D& reference, const 
     return std::atan2(det, dot) * 180 / 3.14;
 }
 
-double Vector2D::Magnitude()
+double Vector2D::Magnitude() const
 {
     return sqrt(_x * _x + _y * _y);
 }

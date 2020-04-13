@@ -3,6 +3,7 @@
 #include "string"
 #include <vector>
 #include <SDL.h>
+// #include "fwd.hpp"
 #include "texture.hpp"
 #include "vector2d.hpp"
 
@@ -21,7 +22,7 @@ public:
     const Texture* GetTexture();
 
     Vector2D Alignment(std::vector<Boid>& Boids);
-    Vector2D Separation(std::vector<Boid>& boids);
+    Vector2D Separation(const std::vector<Boid>& boids) const;
     Vector2D Cohesion(std::vector<Boid>& boids);
 
     Vector2D ChooseLeader(std::vector<Boid>& boids);

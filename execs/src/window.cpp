@@ -1,5 +1,5 @@
-#include "window.hpp"
-#include "exception.hpp"
+#include "boids/window.hpp"
+#include "boids/exception.hpp"
 
 #include <iostream>
 #include "SDL_image.h"

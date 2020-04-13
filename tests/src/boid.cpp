@@ -2,6 +2,8 @@
 
 #include "gtest/gtest.h"
 
+#include "boids/boid.hpp"
+
 namespace
 {
     TEST(Test, Test)

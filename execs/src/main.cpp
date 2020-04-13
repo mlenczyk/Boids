@@ -4,9 +4,9 @@
 #include <vector>
 #include <time.h>
 
-#include "boid.hpp"
-#include "exception.hpp"
-#include "window.hpp"
+#include "boids/boid.hpp"
+#include "boids/exception.hpp"
+#include "boids/window.hpp"
 
 using namespace std;
 
@@ -65,15 +65,15 @@ int main(int argc, char* argv[])
                 auto forceOfAlignment = boids[i].Alignment(boids);
                 forceOfAlignment = forceOfAlignment * 0.2;
 
-                /*auto forceOfSeparation = boids[i].Separation(boids);
-                forceOfSeparation = forceOfSeparation * 0.8;*/
+                auto forceOfSeparation = boids[i].Separation(boids);
+                forceOfSeparation = forceOfSeparation * 0.8;
 
                 auto forceOfCohesion = boids[i].Cohesion(boids);
                 forceOfCohesion = forceOfCohesion * 0.4;
 
-                boidsSnapshot[i].ApplyForce(forceOfAlignment);
-                // boidsSnapshot[i].ApplyForce(forceOfSeparation);
-                boidsSnapshot[i].ApplyForce(forceOfCohesion);
+                // boidsSnapshot[i].ApplyForce(forceOfAlignment);
+                boidsSnapshot[i].ApplyForce(forceOfSeparation);
+                // boidsSnapshot[i].ApplyForce(forceOfCohesion);
 
                 boidsSnapshot[i].Update();
 
