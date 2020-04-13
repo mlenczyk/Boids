@@ -1,5 +1,7 @@
-#pragma once
+// #pragma once
 
-class Texture;
-class Boid;
-class Vector2D;
+// namespace flocking_simulation
+// {
+//     class Texture;
+//     class Boid;
+// }

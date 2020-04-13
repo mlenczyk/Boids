@@ -3,56 +3,54 @@
 #include "string"
 #include <vector>
 #include <SDL.h>
-// #include "fwd.hpp"
+
 #include "texture.hpp"
 #include "vector2d.hpp"
 
-class Boid
+namespace flocking_simulation
 {
-public:
-    Boid(Vector2D position, Vector2D velocity, Texture* boidSmallTexture);
-    // ~Boid();
+    class Boid
+    {
+    public:
+        Boid(Vector2D position, Vector2D velocity, Texture* boidSmallTexture);
 
-    // Boid(const Boid& other);
+        void Update();
+        const Texture* GetTexture();
 
-    // Boid& operator=(const Boid& other);
-    // void Free();
+        Vector2D Alignment(std::vector<Boid>& Boids);
+        Vector2D Separation(const std::vector<Boid>& boids) const;
+        Vector2D Cohesion(std::vector<Boid>& boids);
 
-    void Update();
-    const Texture* GetTexture();
+        Vector2D ChooseLeader(std::vector<Boid>& boids);
 
-    Vector2D Alignment(std::vector<Boid>& Boids);
-    Vector2D Separation(const std::vector<Boid>& boids) const;
-    Vector2D Cohesion(std::vector<Boid>& boids);
+        void ApplyForce(Vector2D force);
 
-    Vector2D ChooseLeader(std::vector<Boid>& boids);
+        SDL_Rect clip = {};
+        SDL_Point center = {};
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-    void ApplyForce(Vector2D force);
+        Vector2D position = {};
+        Vector2D velocity = {};
+        Vector2D acceleration = {};
 
-    SDL_Rect clip = {};
-    SDL_Point center = {};
-    SDL_RendererFlip flip = SDL_FLIP_NONE;
+        double angle = 0;
 
-    Vector2D position = {};
-    Vector2D velocity = {};
-    Vector2D acceleration = {};
+        Vector2D PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(std::vector<Boid>& boids);
+        Vector2D CalculateAlignmentVelocity(Vector2D averageVelocity);
 
-    double angle = 0;
+    private:
+        void ChangeOrientation();
 
-private:
-    void ChangeOrientation();
-    Vector2D PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(std::vector<Boid>& boids);
-    Vector2D CalculateAlignmentVelocity(Vector2D averageVelocity);
+        Vector2D _absoluteZeroOrientation = {0, -1};
 
-    Vector2D _absoluteZeroOrientation = {0, -1};
+        // probably want to make this one variable some day
+        uint16_t _perception = 60;
+        uint16_t _alignmentPerception = _perception;
+        uint16_t _separationPerception = _perception - 40;
+        uint16_t _cohesionPerception = _perception + 100;
 
-    // probably want to make this one variable some day
-    uint16_t _perception = 60;
-    uint16_t _alignmentPerception = _perception;
-    uint16_t _separationPerception = _perception - 40;
-    uint16_t _cohesionPerception = _perception + 100;
+        double _maxSpeed = 3;
 
-    double _maxSpeed = 3;
-
-    Texture* _texture = nullptr;
-};
+        Texture* _texture = nullptr;
+    };
+}

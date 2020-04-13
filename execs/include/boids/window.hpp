@@ -15,9 +15,9 @@ public:
     void PollEvents();
     bool IsClosed() const;
     void UpdateWindow() const;
-    void KeepBoidInScreen(Boid& boid) const;
+    void KeepBoidInScreen(flocking_simulation::Boid& boid) const;
     Texture LoadTexture(std::string texturePath) const;
-    void Render(Boid& boid) const;
+    void Render(flocking_simulation::Boid& boid) const;
 
     SDL_Renderer* _renderer = nullptr;
 

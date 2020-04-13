@@ -10,6 +10,7 @@ target_include_directories(${NAME}
 target_sources(${NAME}
     PRIVATE
         src/boid.cpp
+        src/vector2d.cpp
 )
 
 target_link_libraries(${NAME}

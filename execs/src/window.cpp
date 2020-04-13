@@ -119,7 +119,7 @@ void Window::UpdateWindow() const
     Clear();
 }
 
-void Window::KeepBoidInScreen(Boid& boid) const
+void Window::KeepBoidInScreen(flocking_simulation::Boid& boid) const
 {
     if(boid.position.X() > _width - 20)
     {
@@ -169,23 +169,21 @@ Texture Window::LoadTexture(std::string texturePath) const
     return texture;
 }
 
-void Window::Render(Boid& boid) const
+void Window::Render(flocking_simulation::Boid& boid) const
 {
     SDL_Rect renderQuad = {static_cast<int>(boid.position.X()) - (boid.GetTexture()->width / 2),
                            static_cast<int>(boid.position.Y()) - ((boid.GetTexture()->height * 5) / 6),
                            boid.GetTexture()->width,
                            boid.GetTexture()->height};
-    // is not drawn in the middle of texture.. bgug
-    // boid.clip = renderQuad;
 
     boid.center.x = boid.GetTexture()->width / 2;
     boid.center.y = (boid.GetTexture()->height * 5) / 6;
-    //&(boid.clip)
+
     auto result = SDL_RenderCopyEx(
         _renderer, boid.GetTexture()->texture, nullptr, &renderQuad, boid.angle, &(boid.center), boid.flip);
-    // fix this shit
-    // if(result == -1)
-    //{
-    //  throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});
-    //}
+
+    if(result == -1)
+    {
+        throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});
+    }
 }

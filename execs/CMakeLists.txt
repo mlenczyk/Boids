@@ -4,6 +4,7 @@ add_executable(${NAME})
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 set(BOIDS_SOURCES
     include/boids/boid.hpp
@@ -12,7 +13,6 @@ set(BOIDS_SOURCES
     include/boids/texture.hpp
     include/boids/timer.hpp
 
-    # src/main.cpp
     src/window.cpp
     src/boid.cpp
     src/vector2d.cpp
@@ -24,17 +24,8 @@ target_sources(${NAME} PUBLIC
     src/main.cpp
 )
 
-target_include_directories(${NAME}
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/
-        ${SDL2_INCLUDE_DIR}
-        ${SDL2_IMAGE_INCLUDE_DIR}
-)
-
 target_link_libraries(${NAME}
     PUBLIC
-    ${SDL2_LIBRARY}
-    ${SDL2_IMAGE_LIBRARY}
     boids-testable
 )
 
@@ -83,6 +74,6 @@ if(enable${name}Tests)
         PUBLIC
         ${SDL2_LIBRARY}
         ${SDL2_IMAGE_LIBRARY}
+        Eigen3::Eigen
     )
-    message(WARNING "LIB ${TEST_LIB_NAME} GENERATED @@@@@@@@@@@@@@@@@@@")
 endif()

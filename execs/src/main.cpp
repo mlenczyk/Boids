@@ -9,6 +9,7 @@
 #include "boids/window.hpp"
 
 using namespace std;
+using namespace flocking_simulation;
 
 class RandomGenerator
 {
