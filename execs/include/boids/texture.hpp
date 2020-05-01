@@ -1,24 +1,26 @@
 #pragma once
 
-// #include "SDL.h"
 #include <SDL.h>
 
-struct Texture
+namespace flocking_simulation
 {
-public:
-    Texture() = default;
-    ~Texture();
+    struct Texture
+    {
+    public:
+        Texture() = default;
+        ~Texture();
 
-    Texture(const Texture& other) = delete;
-    Texture(Texture&& other) noexcept;
+        Texture(const Texture& other) = delete;
+        Texture(Texture&& other) noexcept;
 
-    Texture& operator=(const Texture& other) = delete;
-    Texture& operator=(Texture&& other) noexcept;
+        Texture& operator=(const Texture& other) = delete;
+        Texture& operator=(Texture&& other) noexcept;
 
-    SDL_Texture* texture = nullptr;
-    int width = 0;
-    int height = 0;
+        SDL_Texture* texture = nullptr;
+        int width = 0;
+        int height = 0;
 
-private:
-    void Free();
-};
+    private:
+        void Free();
+    };
+}

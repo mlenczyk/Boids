@@ -13,7 +13,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 add_subdirectory(libs)
 add_subdirectory(execs)
 
-option(enable${name}Tests "This option controls whether the tests are enabled" ON)
+option(enable${name}Tests "This option controls whether the tests are enabled" OFF)
 if(enable${name}Tests)
     enable_testing()
     include(GoogleTest)

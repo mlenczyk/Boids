@@ -4,6 +4,7 @@
 #include <vector>
 #include <SDL.h>
 
+#include "sense.hpp"
 #include "texture.hpp"
 #include "vector2d.hpp"
 
@@ -17,11 +18,9 @@ namespace flocking_simulation
         void Update();
         const Texture* GetTexture();
 
-        Vector2D Alignment(std::vector<Boid>& Boids);
-        Vector2D Separation(const std::vector<Boid>& boids) const;
-        Vector2D Cohesion(std::vector<Boid>& boids);
-
-        Vector2D ChooseLeader(std::vector<Boid>& boids);
+        Vector2D Alignment(const std::vector<Boid>& Boids);
+        Vector2D Separation(const std::vector<Boid>& boids);
+        Vector2D Cohesion(const std::vector<Boid>& boids);
 
         void ApplyForce(Vector2D force);
 
@@ -33,10 +32,7 @@ namespace flocking_simulation
         Vector2D velocity = {};
         Vector2D acceleration = {};
 
-        double angle = 0;
-
-        Vector2D PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(std::vector<Boid>& boids);
-        Vector2D CalculateAlignmentVelocity(Vector2D averageVelocity);
+        float angle = 0;
 
     private:
         void ChangeOrientation();
@@ -46,10 +42,14 @@ namespace flocking_simulation
         // probably want to make this one variable some day
         uint16_t _perception = 60;
         uint16_t _alignmentPerception = _perception;
-        uint16_t _separationPerception = _perception - 40;
         uint16_t _cohesionPerception = _perception + 100;
+        uint16_t _separationPerception = _perception - 40;
 
-        double _maxSpeed = 3;
+        AlignmentSense _alignmentSense = AlignmentSense(_alignmentPerception, position, velocity);
+        CohesionSense _cohesionSense = CohesionSense(_cohesionPerception, position);
+        SeparationSense _separationSense = SeparationSense(_separationPerception, position);
+
+        float _maxSpeed = 4;
 
         Texture* _texture = nullptr;
     };

@@ -1,7 +1,7 @@
-// #pragma once
+#pragma once
 
-// namespace flocking_simulation
-// {
-//     class Texture;
-//     class Boid;
-// }
+namespace flocking_simulation
+{
+    class Texture;
+    class Boid;
+}

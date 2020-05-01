@@ -11,13 +11,13 @@ set(BOIDS_SOURCES
     include/boids/window.hpp
     include/boids/vector2d.hpp
     include/boids/texture.hpp
-    include/boids/timer.hpp
+    include/boids/sense.hpp
 
     src/window.cpp
     src/boid.cpp
     src/vector2d.cpp
     src/texture.cpp
-    src/timer.cpp
+    src/sense.cpp
 )
 
 target_sources(${NAME} PUBLIC

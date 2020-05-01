@@ -1,5 +1,3 @@
-#pragma once
-
 #include "gtest/gtest.h"
 
 #include "boids/boid.hpp"
@@ -11,46 +9,96 @@ namespace
 {
     void CheckVectorsEquality(Vector2D expected, Vector2D actual)
     {
-        ASSERT_EQ(expected.X(), actual.X());
-        ASSERT_EQ(expected.Y(), actual.Y());
+        ASSERT_NEAR(expected.X(), actual.X(), 0.001);
+        ASSERT_NEAR(expected.Y(), actual.Y(), 0.001);
     }
 
-    TEST(Test, Test)
-    {
-        ASSERT_TRUE(true);
-    }
+    // Separation
 
-    TEST(BoidPerceiveSurroundingBoidsAndReturnTheirAverageVelocity, NoBoidInRange)
+    TEST(SeparationSense, FarAndSimple)
     {
         std::vector<Boid> boids;
 
         boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(160, 0), Vector2D(), nullptr});
+        boids.push_back(Boid{Vector2D(10, 0), Vector2D(), nullptr});
 
-        auto result = boids[0].PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(boids);
+        auto result1 = boids[0].Separation(boids);
+        auto result2 = boids[1].Separation(boids);
 
-        CheckVectorsEquality(Vector2D(), result);
+        CheckVectorsEquality(Vector2D(-0.1, 0), result1);
+        CheckVectorsEquality(Vector2D(0.1, 0), result2);
     }
 
-    TEST(BoidPerceiveSurroundingBoidsAndReturnTheirAverageVelocity, BoidInRange)
+    TEST(SeparationSense, CloseAndSimple)
     {
         std::vector<Boid> boids;
 
         boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(6, 0), Vector2D(1, 0), nullptr});
+        boids.push_back(Boid{Vector2D(0.1, 0), Vector2D(), nullptr});
 
-        auto result = boids[0].PerceiveSurroundingBoidsAndReturnTheirAverageVelocity(boids);
+        auto result1 = boids[0].Separation(boids);
+        auto result2 = boids[1].Separation(boids);
 
-        CheckVectorsEquality(Vector2D(1, 0), result);
+        CheckVectorsEquality(Vector2D(-1, 0), result1);
+        CheckVectorsEquality(Vector2D(1, 0), result2);
     }
 
-    TEST(CalculateAlignmentVelocity, BoidInRange)
+    TEST(SeparationSense, FarAndComplex)
     {
-        auto boid = Boid(Vector2D(), Vector2D(0, 0), nullptr);
+        std::vector<Boid> boids;
 
-        auto result = boid.CalculateAlignmentVelocity(Vector2D(1, 0));
+        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
+        boids.push_back(Boid{Vector2D(10, 10), Vector2D(), nullptr});
 
-        CheckVectorsEquality(Vector2D(1, 0), result);
+        auto result1 = boids[0].Separation(boids);
+        auto result2 = boids[1].Separation(boids);
+
+        CheckVectorsEquality(Vector2D(-0.1, -0.1), result1);
+        CheckVectorsEquality(Vector2D(0.1, 0.1), result2);
+    }
+
+    TEST(SeparationSense, CloseAndComplex)
+    {
+        std::vector<Boid> boids;
+
+        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
+        boids.push_back(Boid{Vector2D(0.1, 0.1), Vector2D(), nullptr});
+
+        auto result1 = boids[0].Separation(boids);
+        auto result2 = boids[1].Separation(boids);
+
+        CheckVectorsEquality(Vector2D(-0.707, -0.707), result1);
+        CheckVectorsEquality(Vector2D(0.707, 0.707), result2);
+    }
+
+    // Cohesion
+
+    TEST(CohesionSense, Simple)
+    {
+        std::vector<Boid> boids;
+
+        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
+        boids.push_back(Boid{Vector2D(10, 0), Vector2D(), nullptr});
+
+        auto result1 = boids[0].Cohesion(boids);
+        auto result2 = boids[1].Cohesion(boids);
+
+        CheckVectorsEquality(Vector2D(1, 0), result1);
+        CheckVectorsEquality(Vector2D(-1, 0), result2);
+    }
+
+    TEST(CohesionSense, Complex)
+    {
+        std::vector<Boid> boids;
+
+        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
+        boids.push_back(Boid{Vector2D(100, 100), Vector2D(), nullptr});
+
+        auto result1 = boids[0].Cohesion(boids);
+        auto result2 = boids[1].Cohesion(boids);
+
+        CheckVectorsEquality(Vector2D(0.707, 0.707), result1);
+        CheckVectorsEquality(Vector2D(-0.707, -0.707), result2);
     }
 
 }

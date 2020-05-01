@@ -4,186 +4,159 @@
 #include <iostream>
 #include "SDL_image.h"
 
-Window ::Window(const std::string title, int width, int height) :
-    _title(title), _width(width), _height(height)
+namespace flocking_simulation
 {
-    _shouldBeClosed = !Init();
-}
-
-Window::~Window()
-{
-    SDL_DestroyRenderer(_renderer);
-    _renderer = nullptr;
-    SDL_DestroyWindow(_window);
-    _window = nullptr;
-    SDL_Quit();
-    IMG_Quit();
-}
-
-bool Window::Init()
-{
-    if(SDL_Init(SDL_INIT_VIDEO) != 0)
+    Window ::Window(const std::string title, int width, int height) :
+        _title(title), _width(width), _height(height)
     {
-        throw Exception("SDL not initialized");
+        _shouldBeClosed = !Init();
     }
 
-    _window = SDL_CreateWindow(
-        _title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, 0);
-    if(_window == nullptr)
+    Window::~Window()
     {
-        throw Exception("SDL failed to create window");
+        SDL_DestroyRenderer(_renderer);
+        _renderer = nullptr;
+        SDL_DestroyWindow(_window);
+        _window = nullptr;
+        SDL_Quit();
+        IMG_Quit();
     }
 
-    _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_PRESENTVSYNC);
-    if(_renderer == nullptr)
+    bool Window::Init()
     {
-        throw Exception("SDL failed to create renderer");
-    }
-
-    int imgFlags = IMG_INIT_PNG;
-    if(!(IMG_Init(imgFlags) & imgFlags))
-    {
-        std::string error = IMG_GetError();
-        throw Exception(error);
-    }
-
-    return true;
-}
-
-bool Window::IsClosed() const
-{
-    return _shouldBeClosed;
-}
-
-void Window::PollEvents()
-{
-    static SDL_Event event;
-
-    if(SDL_PollEvent(&event))
-    {
-        switch(event.type)
+        if(SDL_Init(SDL_INIT_VIDEO) != 0)
         {
-            case SDL_QUIT:
+            throw Exception("SDL not initialized");
+        }
+
+        _window = SDL_CreateWindow(
+            _title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, 0);
+        if(_window == nullptr)
+        {
+            throw Exception("SDL failed to create window");
+        }
+
+        _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_PRESENTVSYNC);
+        if(_renderer == nullptr)
+        {
+            throw Exception("SDL failed to create renderer");
+        }
+
+        int imgFlags = IMG_INIT_PNG;
+        if(!(IMG_Init(imgFlags) & imgFlags))
+        {
+            std::string error = IMG_GetError();
+            throw Exception(error);
+        }
+
+        return true;
+    }
+
+    bool Window::IsClosed() const
+    {
+        return _shouldBeClosed;
+    }
+
+    void Window::PollEvents()
+    {
+        static SDL_Event event;
+
+        if(SDL_PollEvent(&event))
+        {
+            switch(event.type)
             {
-                _shouldBeClosed = true;
-                break;
-            }
-            case SDL_KEYDOWN:
-            { // Start/stop
-                if(event.key.keysym.sym == SDLK_s)
+                case SDL_QUIT:
                 {
-                    if(_timer.isStarted())
-                    {
-                        _timer.stop();
-                    }
-                    else
-                    {
-                        _timer.start();
-                    }
+                    _shouldBeClosed = true;
+                    break;
                 }
-                // Pause/unpause
-                else if(event.key.keysym.sym == SDLK_p)
+                default:
                 {
-                    if(_timer.isPaused())
-                    {
-                        _timer.unpause();
-                    }
-                    else
-                    {
-                        _timer.pause();
-                    }
+                    break;
                 }
-                break;
-            }
-            default:
-            {
-                break;
             }
         }
     }
-}
 
-void Window::Clear() const
-{
-    SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(_renderer);
-}
-
-void Window::UpdateWindow() const
-{
-    SDL_SetRenderDrawColor(_renderer, 0, 100, 250, 255);
-    SDL_RenderDrawLine(_renderer, _width / 2, 0, _width / 2, _height);
-    SDL_RenderDrawLine(_renderer, 0, _height / 2, _width, _height / 2);
-
-    SDL_RenderPresent(_renderer);
-    Clear();
-}
-
-void Window::KeepBoidInScreen(flocking_simulation::Boid& boid) const
-{
-    if(boid.position.X() > _width - 20)
+    void Window::Clear() const
     {
-        boid.position = Vector2D(20, boid.position.Y());
-    }
-    else if(boid.position.X() < 20)
-    {
-        boid.position = Vector2D(_width - 20, boid.position.Y());
+        SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+        SDL_RenderClear(_renderer);
     }
 
-    if(boid.position.Y() > _height - 20)
+    void Window::UpdateWindow() const
     {
-        boid.position = Vector2D(boid.position.X(), 20);
-    }
-    else if(boid.position.Y() < 20)
-    {
-        boid.position = Vector2D(boid.position.X(), _height - 20);
-    }
-}
+        SDL_SetRenderDrawColor(_renderer, 0, 100, 250, 255);
 
-Texture Window::LoadTexture(std::string texturePath) const
-{
-    Texture texture = {};
-    SDL_Texture* newTexture = nullptr;
-
-    SDL_Surface* loadedSurface = IMG_Load(texturePath.c_str());
-    if(loadedSurface == nullptr)
-    {
-        throw Exception(
-            "Unable to load texture " + texturePath + "! SDL_image Error: " + IMG_GetError() + "\n");
+        SDL_RenderPresent(_renderer);
+        Clear();
     }
 
-    newTexture = SDL_CreateTextureFromSurface(_renderer, loadedSurface);
-    if(newTexture == nullptr)
+    void Window::KeepBoidInScreen(flocking_simulation::Boid& boid) const
     {
-        throw Exception(
-            "Unable to create texture from " + texturePath + "! SDL Error: " + SDL_GetError() +
-            "%s\n");
+        if(boid.position.X() > _width - 20)
+        {
+            boid.position = Vector2D(20, boid.position.Y());
+        }
+        else if(boid.position.X() < 20)
+        {
+            boid.position = Vector2D(_width - 20, boid.position.Y());
+        }
+
+        if(boid.position.Y() > _height - 20)
+        {
+            boid.position = Vector2D(boid.position.X(), 20);
+        }
+        else if(boid.position.Y() < 20)
+        {
+            boid.position = Vector2D(boid.position.X(), _height - 20);
+        }
     }
 
-    texture.texture = newTexture;
-    texture.width = loadedSurface->w;
-    texture.height = loadedSurface->h;
-
-    // SDL_FreeSurface(loadedSurface);
-
-    return texture;
-}
-
-void Window::Render(flocking_simulation::Boid& boid) const
-{
-    SDL_Rect renderQuad = {static_cast<int>(boid.position.X()) - (boid.GetTexture()->width / 2),
-                           static_cast<int>(boid.position.Y()) - ((boid.GetTexture()->height * 5) / 6),
-                           boid.GetTexture()->width,
-                           boid.GetTexture()->height};
-
-    boid.center.x = boid.GetTexture()->width / 2;
-    boid.center.y = (boid.GetTexture()->height * 5) / 6;
-
-    auto result = SDL_RenderCopyEx(
-        _renderer, boid.GetTexture()->texture, nullptr, &renderQuad, boid.angle, &(boid.center), boid.flip);
-
-    if(result == -1)
+    Texture Window::LoadTexture(std::string texturePath) const
     {
-        throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});
+        Texture texture = {};
+        SDL_Texture* newTexture = nullptr;
+
+        SDL_Surface* loadedSurface = IMG_Load(texturePath.c_str());
+        if(loadedSurface == nullptr)
+        {
+            throw Exception(
+                "Unable to load texture " + texturePath + "! SDL_image Error: " + IMG_GetError() +
+                "\n");
+        }
+
+        newTexture = SDL_CreateTextureFromSurface(_renderer, loadedSurface);
+        if(newTexture == nullptr)
+        {
+            throw Exception(
+                "Unable to create texture from " + texturePath + "! SDL Error: " + SDL_GetError() +
+                "%s\n");
+        }
+
+        texture.texture = newTexture;
+        texture.width = loadedSurface->w;
+        texture.height = loadedSurface->h;
+
+        return texture;
+    }
+
+    void Window::Render(flocking_simulation::Boid& boid) const
+    {
+        SDL_Rect renderQuad = {static_cast<int>(boid.position.X()) - (boid.GetTexture()->width / 2),
+                               static_cast<int>(boid.position.Y()) - ((boid.GetTexture()->height * 5) / 6),
+                               boid.GetTexture()->width,
+                               boid.GetTexture()->height};
+
+        boid.center.x = boid.GetTexture()->width / 2;
+        boid.center.y = (boid.GetTexture()->height * 5) / 6;
+
+        auto result = SDL_RenderCopyEx(
+            _renderer, boid.GetTexture()->texture, nullptr, &renderQuad, boid.angle, &(boid.center), boid.flip);
+
+        if(result == -1)
+        {
+            throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});
+        }
     }
 }
