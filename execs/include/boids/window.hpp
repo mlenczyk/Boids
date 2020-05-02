@@ -19,6 +19,9 @@ namespace flocking_simulation
         Texture LoadTexture(std::string texturePath) const;
         void Render(Boid& boid) const;
 
+        int GetWidth() const;
+        int GetHeight() const;
+
         SDL_Renderer* _renderer = nullptr;
 
     private:

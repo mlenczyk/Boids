@@ -4,7 +4,7 @@
 
 namespace flocking_simulation
 {
-    Boid::Boid(Vector2D pos, Vector2D vel, Texture* texture) :
+    Boid::Boid(Vector2D pos, Vector2D vel, const Texture* texture) :
         position{pos}, velocity{vel}, _texture{texture}
     {
     }
@@ -26,23 +26,37 @@ namespace flocking_simulation
         acceleration = Vector2D();
     }
 
-    Vector2D Boid::Alignment(const std::vector<Boid>& boids)
+    void Boid::Alignment(float distance, Vector2D data)
     {
-        _alignmentSense.SetPosition(position);
         _alignmentSense.SetVelocity(velocity);
-        return _alignmentSense.Perceive(boids);
+        _alignmentSense.Perceive(distance, data);
     }
 
-    Vector2D Boid::Cohesion(const std::vector<Boid>& boids)
+    Vector2D Boid::GetAlignmentImpulse()
+    {
+        return _alignmentSense.GetImpulse();
+    }
+
+    void Boid::Cohesion(float distance, Vector2D data)
     {
         _cohesionSense.SetPosition(position);
-        return _cohesionSense.Perceive(boids).Limit(_maxSpeed);
+        _cohesionSense.Perceive(distance, data);
     }
 
-    Vector2D Boid::Separation(const std::vector<Boid>& boids)
+    Vector2D Boid::GetCohesionImpulse()
+    {
+        return _cohesionSense.GetImpulse().Limit(_maxSpeed);
+    }
+
+    void Boid::Separation(float distance, Vector2D data)
     {
         _separationSense.SetPosition(position);
-        return _separationSense.Perceive(boids).Limit(_maxSpeed);
+        _separationSense.Perceive(distance, data);
+    }
+
+    Vector2D Boid::GetSeparationImpulse()
+    {
+        return _separationSense.GetImpulse().Limit(_maxSpeed);
     }
 
     void Boid::ApplyForce(Vector2D force)

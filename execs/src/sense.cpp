@@ -4,14 +4,9 @@
 
 namespace flocking_simulation
 {
-    AlignmentSense::AlignmentSense(float perception, Vector2D position, Vector2D velocity) :
-        _perception{perception}, _position{position}, _velocity{velocity}
+    AlignmentSense::AlignmentSense(float perception, Vector2D velocity) :
+        _perception{perception}, _velocity{velocity}
     {
-    }
-
-    void AlignmentSense::SetPosition(Vector2D position)
-    {
-        _position = position;
     }
 
     void AlignmentSense::SetVelocity(Vector2D velocity)
@@ -19,27 +14,23 @@ namespace flocking_simulation
         _velocity = velocity;
     }
 
-    Vector2D AlignmentSense::Perceive(const std::vector<Boid>& boids) const
+    void AlignmentSense::Perceive(float distance, Vector2D data)
     {
-        uint16_t perceivedBoidsCount = 0;
-        auto alignmentVelocity = Vector2D();
-        float distance = 0;
-        for(auto& boid: boids)
+        if(distance < _perception)
         {
-            distance = _position.MeasureDistanceBetweenTwoVectors(boid.position);
-            if(distance < _perception)
-            {
-                alignmentVelocity += boid.velocity;
-                perceivedBoidsCount++;
-            }
+            _perceivedBoidsVelocitySum += data;
+            _perceivedBoidsCount++;
+        }
+    }
+
+    Vector2D AlignmentSense::GetImpulse()
+    {
+        if(_perceivedBoidsCount <= 0)
+        {
+            return Vector2D();
         }
 
-        if(perceivedBoidsCount > 0)
-        {
-            alignmentVelocity = alignmentVelocity / float(perceivedBoidsCount);
-        }
-
-        return alignmentVelocity - _velocity;
+        return (_perceivedBoidsVelocitySum / float(_perceivedBoidsCount)) - _velocity;
     }
 
     CohesionSense::CohesionSense(float perception, Vector2D position) :
@@ -52,27 +43,23 @@ namespace flocking_simulation
         _position = position;
     }
 
-    Vector2D CohesionSense::Perceive(const std::vector<Boid>& boids) const
+    void CohesionSense::Perceive(float distance, Vector2D data)
     {
-        uint16_t perceivedBoidsCount = 0;
-        auto averagePosition = Vector2D();
-        float distance = 0;
-        for(auto& boid: boids)
+        if(distance < _perception)
         {
-            distance = _position.Vector2D::MeasureDistanceBetweenTwoVectors(boid.position);
-            if(distance < _perception)
-            {
-                averagePosition += boid.position;
-                perceivedBoidsCount++;
-            }
+            _perceivedBoidsPositionSum += data;
+            _perceivedBoidsCount++;
+        }
+    }
+
+    Vector2D CohesionSense::GetImpulse()
+    {
+        if(_perceivedBoidsCount <= 0)
+        {
+            return Vector2D();
         }
 
-        if(perceivedBoidsCount > 0)
-        {
-            averagePosition = averagePosition / float(perceivedBoidsCount);
-        }
-
-        return averagePosition - _position;
+        return (_perceivedBoidsPositionSum / float(_perceivedBoidsCount)) - _position;
     }
 
     SeparationSense::SeparationSense(float perception, Vector2D position) :
@@ -85,33 +72,30 @@ namespace flocking_simulation
         _position = position;
     }
 
-    Vector2D SeparationSense::Perceive(const std::vector<Boid>& boids) const
+    void SeparationSense::Perceive(float distance, Vector2D data)
     {
-        auto positionDifference = Vector2D();
-        auto separationVelocity = Vector2D();
-        float distance = 0;
-        for(auto& boid: boids)
+        if(distance < _perception)
         {
-            distance = _position.MeasureDistanceBetweenTwoVectors(boid.position);
-            if(distance < _perception)
+            auto positionDifference = _position - data;
+
+            float x = 0;
+            if(positionDifference.X() != 0)
             {
-                positionDifference = _position - boid.position;
-
-                float x = 0;
-                if(positionDifference.X() != 0)
-                {
-                    x = 1 / positionDifference.X();
-                }
-
-                float y = 0;
-                if(positionDifference.Y() != 0)
-                {
-                    y = 1 / positionDifference.Y();
-                }
-
-                separationVelocity += Vector2D(x, y);
+                x = 1 / positionDifference.X();
             }
+
+            float y = 0;
+            if(positionDifference.Y() != 0)
+            {
+                y = 1 / positionDifference.Y();
+            }
+
+            _perceivedBoidsSeparationPosition += Vector2D(x, y);
         }
-        return separationVelocity;
+    }
+
+    Vector2D SeparationSense::GetImpulse()
+    {
+        return _perceivedBoidsSeparationPosition;
     }
 }

@@ -7,17 +7,22 @@ find_package(SDL2_image REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 set(BOIDS_SOURCES
+    include/boids/exception.hpp
     include/boids/boid.hpp
     include/boids/window.hpp
     include/boids/vector2d.hpp
     include/boids/texture.hpp
     include/boids/sense.hpp
+    include/boids/randomGenerator.hpp
+    include/boids/flock.hpp
+    include/boids/fwd.hpp
 
     src/window.cpp
     src/boid.cpp
     src/vector2d.cpp
     src/texture.cpp
     src/sense.cpp
+    src/flock.cpp
 )
 
 target_sources(${NAME} PUBLIC
@@ -26,7 +31,7 @@ target_sources(${NAME} PUBLIC
 
 target_link_libraries(${NAME}
     PUBLIC
-    boids-testable
+    boids-lib
 )
 
 add_custom_target(${NAME}.run
@@ -56,24 +61,22 @@ add_custom_command(TARGET ${NAME} POST_BUILD
         "${SDL2_image_PATH}/lib/${VERSION}/zlib1.dll"
         $<TARGET_FILE_DIR:${NAME}>/zlib1.dll)
         
-if(enable${name}Tests)
-    set(TEST_LIB_NAME ${NAME}-testable)
-    add_library(${TEST_LIB_NAME} STATIC)
-    target_sources(${TEST_LIB_NAME} PRIVATE
-        ${BOIDS_SOURCES}
+set(TEST_LIB_NAME ${NAME}-lib)
+add_library(${TEST_LIB_NAME} STATIC)
+target_sources(${TEST_LIB_NAME} PRIVATE
+    ${BOIDS_SOURCES}
     )
     
-    target_include_directories(${TEST_LIB_NAME}
-        PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/include/
-            ${SDL2_INCLUDE_DIR}
-            ${SDL2_IMAGE_INCLUDE_DIR}
+target_include_directories(${TEST_LIB_NAME}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/
+        ${SDL2_INCLUDE_DIR}
+        ${SDL2_IMAGE_INCLUDE_DIR}
     )
     
-    target_link_libraries(${TEST_LIB_NAME}
-        PUBLIC
-        ${SDL2_LIBRARY}
-        ${SDL2_IMAGE_LIBRARY}
-        Eigen3::Eigen
+target_link_libraries(${TEST_LIB_NAME}
+    PUBLIC
+    ${SDL2_LIBRARY}
+    ${SDL2_IMAGE_LIBRARY}
+    Eigen3::Eigen
     )
-endif()

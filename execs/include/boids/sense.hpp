@@ -7,51 +7,62 @@
 
 namespace flocking_simulation
 {
-    class ISense
+    // class ISense
+    // {
+    // public:
+    //     virtual void SetPosition(Vector2D position) = 0;
+    //     virtual Vector2D Perceive(const std::vector<Boid>& boids) const = 0;
+
+    // protected:
+    //     virtual ~ISense() = default;
+    // };
+
+    class AlignmentSense
     {
     public:
-        virtual void SetPosition(Vector2D position) = 0;
-        virtual Vector2D Perceive(const std::vector<Boid>& boids) const = 0;
+        AlignmentSense(float perception, Vector2D velocity);
 
-    protected:
-        virtual ~ISense() = default;
-    };
-
-    class AlignmentSense : public ISense
-    {
-    public:
-        AlignmentSense(float perception, Vector2D position, Vector2D velocity);
-        void SetPosition(Vector2D position) override;
         void SetVelocity(Vector2D velocity);
-        Vector2D Perceive(const std::vector<Boid>& boids) const override;
+        void Perceive(float distance, Vector2D data);
+        Vector2D GetImpulse();
 
     private:
         float _perception;
-        Vector2D _position;
         Vector2D _velocity;
+        uint16_t _perceivedBoidsCount = 0;
+        Vector2D _perceivedBoidsVelocitySum = {};
     };
 
-    class CohesionSense : public ISense
+    class CohesionSense
     {
     public:
         CohesionSense(float perception, Vector2D position);
-        void SetPosition(Vector2D position) override;
-        Vector2D Perceive(const std::vector<Boid>& boids) const override;
+
+        void SetPosition(Vector2D position);
+        void Perceive(float distance, Vector2D data);
+        Vector2D GetImpulse();
 
     private:
         float _perception;
         Vector2D _position;
+
+        uint16_t _perceivedBoidsCount = 0;
+        Vector2D _perceivedBoidsPositionSum = {};
     };
 
-    class SeparationSense : public ISense
+    class SeparationSense
     {
     public:
         SeparationSense(float perception, Vector2D position);
-        void SetPosition(Vector2D position) override;
-        Vector2D Perceive(const std::vector<Boid>& boids) const override;
+
+        void SetPosition(Vector2D position);
+        void Perceive(float distance, Vector2D data);
+        Vector2D GetImpulse();
 
     private:
         float _perception;
         Vector2D _position;
+
+        Vector2D _perceivedBoidsSeparationPosition = {};
     };
 }

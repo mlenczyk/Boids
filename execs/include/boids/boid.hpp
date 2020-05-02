@@ -13,14 +13,19 @@ namespace flocking_simulation
     class Boid
     {
     public:
-        Boid(Vector2D position, Vector2D velocity, Texture* boidSmallTexture);
+        Boid(Vector2D position, Vector2D velocity, const Texture* boidSmallTexture);
 
         void Update();
         const Texture* GetTexture();
 
-        Vector2D Alignment(const std::vector<Boid>& Boids);
-        Vector2D Separation(const std::vector<Boid>& boids);
-        Vector2D Cohesion(const std::vector<Boid>& boids);
+        void Alignment(float distance, Vector2D data);
+        Vector2D GetAlignmentImpulse();
+
+        void Cohesion(float distance, Vector2D data);
+        Vector2D Boid::GetCohesionImpulse();
+
+        void Separation(float distance, Vector2D data);
+        Vector2D Boid::GetSeparationImpulse();
 
         void ApplyForce(Vector2D force);
 
@@ -40,17 +45,17 @@ namespace flocking_simulation
         Vector2D _absoluteZeroOrientation = {0, -1};
 
         // probably want to make this one variable some day
-        uint16_t _perception = 60;
+        uint16_t _perception = 50;
         uint16_t _alignmentPerception = _perception;
-        uint16_t _cohesionPerception = _perception + 100;
-        uint16_t _separationPerception = _perception - 40;
+        uint16_t _cohesionPerception = _perception + 50;
+        uint16_t _separationPerception = _perception - 20;
 
-        AlignmentSense _alignmentSense = AlignmentSense(_alignmentPerception, position, velocity);
+        AlignmentSense _alignmentSense = AlignmentSense(_alignmentPerception, velocity);
         CohesionSense _cohesionSense = CohesionSense(_cohesionPerception, position);
         SeparationSense _separationSense = SeparationSense(_separationPerception, position);
 
         float _maxSpeed = 4;
 
-        Texture* _texture = nullptr;
+        const Texture* _texture = nullptr;
     };
 }

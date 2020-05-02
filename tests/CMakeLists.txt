@@ -17,7 +17,7 @@ target_sources(${NAME}
 target_link_libraries(${NAME}
         gtest
         gtest_main
-        boids-testable
+        boids-lib
 )
 
 if (CMAKE_VERSION GREATER_EQUAL 3.10)

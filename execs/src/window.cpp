@@ -1,4 +1,5 @@
 #include "boids/window.hpp"
+#include "boids/boid.hpp"
 #include "boids/exception.hpp"
 
 #include <iostream>
@@ -141,7 +142,7 @@ namespace flocking_simulation
         return texture;
     }
 
-    void Window::Render(flocking_simulation::Boid& boid) const
+    void Window::Render(Boid& boid) const
     {
         SDL_Rect renderQuad = {static_cast<int>(boid.position.X()) - (boid.GetTexture()->width / 2),
                                static_cast<int>(boid.position.Y()) - ((boid.GetTexture()->height * 5) / 6),
@@ -158,5 +159,15 @@ namespace flocking_simulation
         {
             throw Exception("Boid rendering failed. " + std::string{SDL_GetError()});
         }
+    }
+
+    int Window::GetWidth() const
+    {
+        return _width;
+    }
+
+    int Window::GetHeight() const
+    {
+        return _height;
     }
 }
