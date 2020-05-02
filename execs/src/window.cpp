@@ -1,6 +1,7 @@
 #include "boids/window.hpp"
 #include "boids/boid.hpp"
 #include "boids/exception.hpp"
+#include "boids/vector2d.hpp"
 
 #include <iostream>
 #include "SDL_image.h"
@@ -71,6 +72,24 @@ namespace flocking_simulation
                     _shouldBeClosed = true;
                     break;
                 }
+                case SDL_MOUSEBUTTONDOWN:
+                {
+                    int mousePosX;
+                    int mousePosY;
+
+                    SDL_GetMouseState(&mousePosX, &mousePosY);
+
+                    if(event.button.button == SDL_BUTTON_LEFT)
+                    {
+                        AddObstaclePoint(mousePosX, mousePosY);
+                    }
+
+                    if(event.button.button == SDL_BUTTON_RIGHT)
+                    {
+                        DeleteObstaclePoint(mousePosX, mousePosY);
+                    }
+                    break;
+                }
                 default:
                 {
                     break;
@@ -79,16 +98,43 @@ namespace flocking_simulation
         }
     }
 
+    void Window::AddObstaclePoint(int x, int y)
+    {
+        _obstacles.push_back(SDL_Point{x, y});
+    }
+
+    void Window::DeleteObstaclePoint(int x, int y)
+    {
+        static constexpr int precision = 10;
+
+        _obstacles.erase(
+            std::remove_if(
+                _obstacles.begin(),
+                _obstacles.end(),
+                [&](const SDL_Point& point) {
+                    return (
+                        ((x - precision) <= point.x && point.x <= (x + precision)) &&
+                        ((y - precision) <= point.y && point.y <= (y + precision)));
+                }),
+            _obstacles.end());
+    }
+
+    void Window::DrawPoints(const std::vector<SDL_Point>& points)
+    {
+        SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+
+        SDL_RenderDrawPoints(_renderer, points.data(), points.size());
+    }
+
     void Window::Clear() const
     {
         SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
         SDL_RenderClear(_renderer);
     }
 
-    void Window::UpdateWindow() const
+    void Window::UpdateWindow()
     {
-        SDL_SetRenderDrawColor(_renderer, 0, 100, 250, 255);
-
+        DrawPoints(_obstacles);
         SDL_RenderPresent(_renderer);
         Clear();
     }
@@ -170,4 +216,10 @@ namespace flocking_simulation
     {
         return _height;
     }
+
+    std::vector<SDL_Point>* Window::GetObstacles()
+    {
+        return &_obstacles;
+    }
+
 }

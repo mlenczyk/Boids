@@ -115,46 +115,4 @@ namespace flocking_simulation
     {
         return _perceivedBoidsSeparationPosition;
     }
-
-    WallAvoidanceSense::WallAvoidanceSense(float perception, Vector2D position) :
-        _perception{perception}, _position{position}
-    {
-    }
-
-    void WallAvoidanceSense::SetPosition(Vector2D position)
-    {
-        _position = position;
-    }
-
-    void WallAvoidanceSense::Reset()
-    {
-        _perceivedWallsSeparationPosition = Vector2D();
-    }
-
-    void WallAvoidanceSense::Perceive(float distance, Vector2D data)
-    {
-        if(distance < _perception)
-        {
-            auto positionDifference = _position - data;
-
-            float x = 0;
-            if(positionDifference.X() != 0)
-            {
-                x = 1 / positionDifference.X();
-            }
-
-            float y = 0;
-            if(positionDifference.Y() != 0)
-            {
-                y = 1 / positionDifference.Y();
-            }
-
-            _perceivedWallsSeparationPosition += Vector2D(x, y);
-        }
-    }
-
-    Vector2D WallAvoidanceSense::GetImpulse()
-    {
-        return _perceivedWallsSeparationPosition;
-    }
 }

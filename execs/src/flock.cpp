@@ -48,6 +48,7 @@ namespace flocking_simulation
                 _boids[i].CohesionReset();
                 _boids[i].SeparationReset();
                 _boids[i].WallAvoidanceReset();
+                _boids[i].ObstacleAvoidanceReset();
 
                 for(auto& boid: _boids)
                 {
@@ -58,21 +59,31 @@ namespace flocking_simulation
                     _boids[i].Separation(distance, boid.position);
                 }
                 _boids[i].AvoidWallCollision(_window->GetWidth(), _window->GetHeight());
+                for(auto& obstacle: *(_window->GetObstacles()))
+                {
+                    auto obstacleV = Vector2D(obstacle.x, obstacle.y);
+                    auto obstacleDistance =
+                        _boids[i].position.MeasureDistanceBetweenTwoVectors(obstacleV);
+                    _boids[i].AvoidObstacleCollision(obstacleDistance, obstacleV);
+                }
 
                 auto forceOfAlignment = _boids[i].GetAlignmentImpulse();
                 auto forceOfCohesion = _boids[i].GetCohesionImpulse();
                 auto forceOfSeparation = _boids[i].GetSeparationImpulse();
                 auto forceOfWallAvoidance = _boids[i].GetWallAvoidanceImpulse();
+                auto forceOfObstacleAvoidance = _boids[i].GetObstacleAvoidanceImpulse();
 
                 forceOfAlignment = forceOfAlignment * 0.5;
                 forceOfCohesion = forceOfCohesion * 0.3;
                 forceOfSeparation = forceOfSeparation * 1.6;
                 forceOfWallAvoidance = forceOfWallAvoidance * 100;
+                forceOfObstacleAvoidance = forceOfObstacleAvoidance * 15;
 
                 _boidsSnapshot[i].ApplyForce(forceOfAlignment);
                 _boidsSnapshot[i].ApplyForce(forceOfCohesion);
                 _boidsSnapshot[i].ApplyForce(forceOfSeparation);
                 _boidsSnapshot[i].ApplyForce(forceOfWallAvoidance);
+                _boidsSnapshot[i].ApplyForce(forceOfObstacleAvoidance);
 
                 _boidsSnapshot[i].Update();
 

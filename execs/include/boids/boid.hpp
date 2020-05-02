@@ -36,6 +36,10 @@ namespace flocking_simulation
         Vector2D GetWallAvoidanceImpulse();
         void WallAvoidanceReset();
 
+        void AvoidObstacleCollision(float distanceToObstacle, Vector2D obstaclePosition);
+        Vector2D GetObstacleAvoidanceImpulse();
+        void ObstacleAvoidanceReset();
+
         SDL_Rect clip = {};
         SDL_Point center = {};
         SDL_RendererFlip flip = SDL_FLIP_NONE;
@@ -57,11 +61,13 @@ namespace flocking_simulation
         uint16_t _cohesionPerception = _perception + 50;
         uint16_t _separationPerception = _perception - 20;
         uint16_t _wallAvoidancePerception = _perception + 50;
+        uint16_t _obstacleAvoidancePerception = _perception - 10;
 
         AlignmentSense _alignmentSense = AlignmentSense(_alignmentPerception, velocity);
         CohesionSense _cohesionSense = CohesionSense(_cohesionPerception, position);
         SeparationSense _separationSense = SeparationSense(_separationPerception, position);
-        WallAvoidanceSense _wallAvoidanceSense = WallAvoidanceSense(_wallAvoidancePerception, position);
+        SeparationSense _wallAvoidanceSense = SeparationSense(_wallAvoidancePerception, position);
+        SeparationSense _obstacleAvoidanceSense = SeparationSense(_obstacleAvoidancePerception, position);
 
         float _maxSpeed;
 

@@ -109,4 +109,20 @@ namespace flocking_simulation
         _wallAvoidanceSense.Reset();
     }
 
+    void Boid::AvoidObstacleCollision(float distanceToObstacle, Vector2D obstaclePosition)
+    {
+        _obstacleAvoidanceSense.SetPosition(position);
+        _obstacleAvoidanceSense.Perceive(distanceToObstacle, obstaclePosition);
+    }
+
+    Vector2D Boid::GetObstacleAvoidanceImpulse()
+    {
+        return _obstacleAvoidanceSense.GetImpulse().Limit(_maxSpeed);
+    }
+
+    void Boid::ObstacleAvoidanceReset()
+    {
+        _obstacleAvoidanceSense.Reset();
+    }
+
 }
