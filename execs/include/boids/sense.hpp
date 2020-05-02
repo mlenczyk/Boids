@@ -15,6 +15,7 @@ namespace flocking_simulation
         void SetVelocity(Vector2D velocity);
         void Perceive(float distance, Vector2D data);
         Vector2D GetImpulse();
+        void Reset();
 
     private:
         float _perception;
@@ -31,6 +32,7 @@ namespace flocking_simulation
         void SetPosition(Vector2D position);
         void Perceive(float distance, Vector2D data);
         Vector2D GetImpulse();
+        void Reset();
 
     private:
         float _perception;
@@ -48,11 +50,29 @@ namespace flocking_simulation
         void SetPosition(Vector2D position);
         void Perceive(float distance, Vector2D data);
         Vector2D GetImpulse();
+        void Reset();
 
     private:
         float _perception;
         Vector2D _position;
 
         Vector2D _perceivedBoidsSeparationPosition = {};
+    };
+
+    class WallAvoidanceSense
+    {
+    public:
+        WallAvoidanceSense(float perception, Vector2D position);
+
+        void SetPosition(Vector2D position);
+        void Perceive(float distance, Vector2D data);
+        Vector2D GetImpulse();
+        void Reset();
+
+    private:
+        float _perception;
+        Vector2D _position;
+
+        Vector2D _perceivedWallsSeparationPosition = {};
     };
 }

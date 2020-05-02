@@ -13,21 +13,28 @@ namespace flocking_simulation
     class Boid
     {
     public:
-        Boid(Vector2D position, Vector2D velocity, const Texture* boidSmallTexture);
+        Boid(Vector2D position, Vector2D velocity, const Texture* boidSmallTexture, float maxSpeed = 1.0);
 
         void Update();
         const Texture* GetTexture();
 
         void Alignment(float distance, Vector2D data);
         Vector2D GetAlignmentImpulse();
+        void AlignmentReset();
 
         void Cohesion(float distance, Vector2D data);
-        Vector2D Boid::GetCohesionImpulse();
+        Vector2D GetCohesionImpulse();
+        void CohesionReset();
 
         void Separation(float distance, Vector2D data);
-        Vector2D Boid::GetSeparationImpulse();
+        Vector2D GetSeparationImpulse();
+        void SeparationReset();
 
         void ApplyForce(Vector2D force);
+
+        void AvoidWallCollision(int width, int height);
+        Vector2D GetWallAvoidanceImpulse();
+        void WallAvoidanceReset();
 
         SDL_Rect clip = {};
         SDL_Point center = {};
@@ -49,12 +56,14 @@ namespace flocking_simulation
         uint16_t _alignmentPerception = _perception;
         uint16_t _cohesionPerception = _perception + 50;
         uint16_t _separationPerception = _perception - 20;
+        uint16_t _wallAvoidancePerception = _perception;
 
         AlignmentSense _alignmentSense = AlignmentSense(_alignmentPerception, velocity);
         CohesionSense _cohesionSense = CohesionSense(_cohesionPerception, position);
         SeparationSense _separationSense = SeparationSense(_separationPerception, position);
+        WallAvoidanceSense _wallAvoidanceSense = WallAvoidanceSense(_wallAvoidancePerception, position);
 
-        float _maxSpeed = 4;
+        float _maxSpeed;
 
         const Texture* _texture = nullptr;
     };

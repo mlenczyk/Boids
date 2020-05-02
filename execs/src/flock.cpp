@@ -17,6 +17,7 @@ namespace flocking_simulation
     {
         static constexpr float VelocityMin = -1.5;
         static constexpr float VelocityMax = 1.5;
+        static constexpr float MaxSpeed = 4;
 
         for(auto i = 0; i < _boidsCount; i++)
         {
@@ -27,7 +28,8 @@ namespace flocking_simulation
                 Vector2D(
                     RandomGenerator::Draw(VelocityMin, VelocityMax),
                     RandomGenerator::Draw(VelocityMin, VelocityMax)),
-                &_boidsTexture));
+                &_boidsTexture,
+                MaxSpeed));
         }
         _boidsSnapshot = _boids;
     }
@@ -42,6 +44,11 @@ namespace flocking_simulation
             auto beforeBoidIter = SDL_GetTicks();
             for(int i = 0; i < _boids.size(); i++)
             {
+                _boids[i].AlignmentReset();
+                _boids[i].CohesionReset();
+                _boids[i].SeparationReset();
+                _boids[i].WallAvoidanceReset();
+
                 for(auto& boid: _boids)
                 {
                     auto distance = _boids[i].position.MeasureDistanceBetweenTwoVectors(boid.position);
@@ -50,18 +57,22 @@ namespace flocking_simulation
                     _boids[i].Cohesion(distance, boid.position);
                     _boids[i].Separation(distance, boid.position);
                 }
+                _boids[i].AvoidWallCollision(_window->GetWidth(), _window->GetHeight());
 
                 auto forceOfAlignment = _boids[i].GetAlignmentImpulse();
                 auto forceOfCohesion = _boids[i].GetCohesionImpulse();
                 auto forceOfSeparation = _boids[i].GetSeparationImpulse();
+                auto forceOfWallAvoidance = _boids[i].GetWallAvoidanceImpulse();
 
                 forceOfAlignment = forceOfAlignment * 0.5;
                 forceOfCohesion = forceOfCohesion * 0.3;
                 forceOfSeparation = forceOfSeparation * 1.6;
+                forceOfWallAvoidance = forceOfWallAvoidance * 20;
 
                 _boidsSnapshot[i].ApplyForce(forceOfAlignment);
                 _boidsSnapshot[i].ApplyForce(forceOfCohesion);
                 _boidsSnapshot[i].ApplyForce(forceOfSeparation);
+                _boidsSnapshot[i].ApplyForce(forceOfWallAvoidance);
 
                 _boidsSnapshot[i].Update();
 

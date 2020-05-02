@@ -37,7 +37,7 @@ namespace flocking_simulation
             throw Exception("SDL failed to create window");
         }
 
-        _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_PRESENTVSYNC);
+        _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
         if(_renderer == nullptr)
         {
             throw Exception("SDL failed to create renderer");
@@ -93,24 +93,24 @@ namespace flocking_simulation
         Clear();
     }
 
-    void Window::KeepBoidInScreen(flocking_simulation::Boid& boid) const
+    void Window::KeepBoidInScreen(Boid& boid) const
     {
-        if(boid.position.X() > _width - 20)
+        if(boid.position.X() > _width - 1)
         {
-            boid.position = Vector2D(20, boid.position.Y());
+            boid.position = Vector2D(1, boid.position.Y());
         }
-        else if(boid.position.X() < 20)
+        else if(boid.position.X() < 1)
         {
-            boid.position = Vector2D(_width - 20, boid.position.Y());
+            boid.position = Vector2D(_width - 1, boid.position.Y());
         }
 
-        if(boid.position.Y() > _height - 20)
+        if(boid.position.Y() > _height - 1)
         {
-            boid.position = Vector2D(boid.position.X(), 20);
+            boid.position = Vector2D(boid.position.X(), 1);
         }
-        else if(boid.position.Y() < 20)
+        else if(boid.position.Y() < 1)
         {
-            boid.position = Vector2D(boid.position.X(), _height - 20);
+            boid.position = Vector2D(boid.position.X(), _height - 1);
         }
     }
 

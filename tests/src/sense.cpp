@@ -19,8 +19,8 @@ namespace
     {
         std::vector<Boid> boids;
 
-        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(10, 0), Vector2D(), nullptr});
+        boids.push_back(Boid(Vector2D(), Vector2D(), nullptr));
+        boids.push_back(Boid(Vector2D(10, 0), Vector2D(), nullptr));
 
         for(auto& boid: boids)
         {
@@ -45,8 +45,8 @@ namespace
     {
         std::vector<Boid> boids;
 
-        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(0.1, 0), Vector2D(), nullptr});
+        boids.push_back(Boid(Vector2D(), Vector2D(), nullptr));
+        boids.push_back(Boid(Vector2D(0.1, 0), Vector2D(), nullptr));
 
         for(auto& boid: boids)
         {
@@ -71,8 +71,8 @@ namespace
     {
         std::vector<Boid> boids;
 
-        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(10, 10), Vector2D(), nullptr});
+        boids.push_back(Boid(Vector2D(), Vector2D(), nullptr));
+        boids.push_back(Boid(Vector2D(10, 10), Vector2D(), nullptr));
 
         for(auto& boid: boids)
         {
@@ -97,8 +97,8 @@ namespace
     {
         std::vector<Boid> boids;
 
-        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(0.1, 0.1), Vector2D(), nullptr});
+        boids.push_back(Boid(Vector2D(), Vector2D(), nullptr));
+        boids.push_back(Boid(Vector2D(0.1, 0.1), Vector2D(), nullptr));
 
         for(auto& boid: boids)
         {
@@ -119,14 +119,31 @@ namespace
         CheckVectorsEquality(Vector2D(0.707, 0.707), result2);
     }
 
+    // Wall avoidance
+
+    TEST(WallAvoidance, CloseAndSimple)
+    {
+        std::vector<Boid> boids;
+
+        boids.push_back(Boid(Vector2D(3, 10), Vector2D(), nullptr));
+        auto wallPosition = Vector2D(0, 10);
+
+        auto distance = boids[0].position.MeasureDistanceBetweenTwoVectors(wallPosition);
+        boids[0].Separation(distance, wallPosition);
+
+        auto result1 = boids[0].GetSeparationImpulse();
+
+        CheckVectorsEquality(Vector2D(0.333, 0), result1);
+    }
+
     // Cohesion
 
     TEST(CohesionSense, Simple)
     {
         std::vector<Boid> boids;
 
-        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(10, 0), Vector2D(), nullptr});
+        boids.push_back(Boid(Vector2D(), Vector2D(), nullptr));
+        boids.push_back(Boid(Vector2D(10, 0), Vector2D(), nullptr));
 
         for(auto& boid: boids)
         {
@@ -151,8 +168,8 @@ namespace
     {
         std::vector<Boid> boids;
 
-        boids.push_back(Boid{Vector2D(), Vector2D(), nullptr});
-        boids.push_back(Boid{Vector2D(40, 40), Vector2D(), nullptr});
+        boids.push_back(Boid(Vector2D(), Vector2D(), nullptr));
+        boids.push_back(Boid(Vector2D(40, 40), Vector2D(), nullptr));
 
         for(auto& boid: boids)
         {
@@ -179,8 +196,8 @@ namespace
     {
         std::vector<Boid> boids;
 
-        boids.push_back(Boid{Vector2D(6, 0), Vector2D(1.123, 0), nullptr});
-        boids.push_back(Boid{Vector2D(3, 0), Vector2D(2.123, 0), nullptr});
+        boids.push_back(Boid(Vector2D(6, 0), Vector2D(1.123, 0), nullptr));
+        boids.push_back(Boid(Vector2D(3, 0), Vector2D(2.123, 0), nullptr));
 
         for(auto& boid: boids)
         {

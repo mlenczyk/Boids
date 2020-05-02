@@ -41,8 +41,17 @@ namespace flocking_simulation
 
     Vector2D Vector2D::operator-(const Vector2D& other) const
     {
-        auto v = _v - other._v;
-        return Vector2D(v);
+        auto v = Vector2D(_v - other._v);
+        if(abs(v.X()) < 0.001)
+        {
+            v = Vector2D(0, v.Y());
+        }
+
+        if(abs(v.Y()) < 0.001)
+        {
+            v = Vector2D(v.X(), 0);
+        }
+        return v;
     }
 
     Vector2D Vector2D::operator-(float value) const
