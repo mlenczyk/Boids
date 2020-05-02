@@ -1,6 +1,12 @@
 # Boids
 Flocking simulation - work in progress.
 
-## Simulation window
-![Simulation window](/flocking.png?raw=true)
+Current features:
+- Alignment
+- Cohesion
+- Separation
+- Wall avoidance
+
+## Simulation
+![Simulation](/flocking.gif?raw=true)
 

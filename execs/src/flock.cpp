@@ -17,7 +17,7 @@ namespace flocking_simulation
     {
         static constexpr float VelocityMin = -1.5;
         static constexpr float VelocityMax = 1.5;
-        static constexpr float MaxSpeed = 4;
+        static constexpr float MaxSpeed = 6;
 
         for(auto i = 0; i < _boidsCount; i++)
         {
@@ -67,7 +67,7 @@ namespace flocking_simulation
                 forceOfAlignment = forceOfAlignment * 0.5;
                 forceOfCohesion = forceOfCohesion * 0.3;
                 forceOfSeparation = forceOfSeparation * 1.6;
-                forceOfWallAvoidance = forceOfWallAvoidance * 20;
+                forceOfWallAvoidance = forceOfWallAvoidance * 100;
 
                 _boidsSnapshot[i].ApplyForce(forceOfAlignment);
                 _boidsSnapshot[i].ApplyForce(forceOfCohesion);

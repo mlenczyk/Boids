@@ -56,7 +56,7 @@ namespace flocking_simulation
         uint16_t _alignmentPerception = _perception;
         uint16_t _cohesionPerception = _perception + 50;
         uint16_t _separationPerception = _perception - 20;
-        uint16_t _wallAvoidancePerception = _perception;
+        uint16_t _wallAvoidancePerception = _perception + 50;
 
         AlignmentSense _alignmentSense = AlignmentSense(_alignmentPerception, velocity);
         CohesionSense _cohesionSense = CohesionSense(_cohesionPerception, position);
