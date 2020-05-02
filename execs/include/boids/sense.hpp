@@ -7,16 +7,6 @@
 
 namespace flocking_simulation
 {
-    // class ISense
-    // {
-    // public:
-    //     virtual void SetPosition(Vector2D position) = 0;
-    //     virtual Vector2D Perceive(const std::vector<Boid>& boids) const = 0;
-
-    // protected:
-    //     virtual ~ISense() = default;
-    // };
-
     class AlignmentSense
     {
     public:

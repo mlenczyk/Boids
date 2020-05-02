@@ -9,7 +9,6 @@ target_include_directories(${NAME}
 
 target_sources(${NAME}
     PRIVATE
-        src/boid.cpp
         src/sense.cpp
         src/vector2d.cpp
 )
